@@ -2,6 +2,11 @@
 # jeannen2@uci.edu
 # 57923737
 
+'''
+Protocol for ds client and server
+for receiving messages from the server
+'''
+
 import json
 from collections import namedtuple
 
@@ -23,12 +28,11 @@ def extract_json(json_msg: str) -> DataTuple:
                 message=resp.get('message'),
                 token=resp.get('token'),
                 )
-        else:
-            return DataTuple(
-                type=resp.get('type'),
-                message=resp.get('message'),
-                token="None"
-            )
+        return DataTuple(
+            type=resp.get('type'),
+            message=resp.get('message'),
+            token="None"
+        )
     except json.JSONDecodeError:
         print("Json cannot be decoded.")
         return None
