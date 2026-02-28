@@ -1,16 +1,23 @@
 # JEANNE NGUYEN
 # jeannen2@uci.edu
 # 57923737
+'''
+User friendly code that allows the user to
+explore their computer and also post things
+to a website.
+'''
 
-
-import ui
 from pathlib import Path
+import ui
 
-e_subcommands = {"-usr", "-post", "-pwd",
+E_SUBCOMMANDS = {"-usr", "-post", "-pwd",
                  "-bio", "-addpost", "-delpost"}
 
 
 def print_options():
+    '''
+    Prints menu of commands for the user
+    '''
     print("Here are the commands you can input:\r\n"
           "L: List all the contents in a given directory."
           " (More options available if chosen)\r\n"
@@ -31,6 +38,9 @@ def print_options():
 
 
 def parse_command_l(command):
+    '''
+    Splits whatever the user inputs if they chose the "L" command
+    '''
     tokens = command.split()
     if not tokens:
         print("ERROR")
@@ -64,6 +74,9 @@ def parse_command_l(command):
 
 
 def parse_command_e(command):
+    '''
+    Splits whatever the user inputs if they chose the "E" command
+    '''
     tokens = command.split()
     if not tokens:
         print("ERROR")
@@ -72,7 +85,7 @@ def parse_command_e(command):
     i = 0
     while i < len(tokens):
         flag = tokens[i]
-        if flag in e_subcommands:
+        if flag in E_SUBCOMMANDS:
             i += 1
             if i >= len(tokens) or tokens[i].startswith("-"):
                 print(f"Missing argument for {flag}")
@@ -81,7 +94,7 @@ def parse_command_e(command):
             if tokens[i].startswith('"') or tokens[i].startswith("'"):
                 value, i = parse_quotes(tokens, i)
             else:
-                while i < len(tokens) and (not tokens[i] in e_subcommands):
+                while i < len(tokens) and (not tokens[i] in E_SUBCOMMANDS):
                     value_parts.append(tokens[i])
                     i += 1
                 value = " ".join(value_parts)
@@ -95,6 +108,9 @@ def parse_command_e(command):
 
 
 def parse_command_p(command):
+    '''
+    Splits whatever the user inputs if they chose the "P" command
+    '''
     tokens = command.split()
     if not tokens:
         return None
@@ -119,6 +135,10 @@ def parse_command_p(command):
 
 
 def parse_quotes(tokens, i):
+    '''
+    Splits part of whatever the user inputed
+    in commands if it should have quotes around it
+    '''
     value_parts = []
     if tokens[i].startswith('"') or tokens[i].startswith("'"):
         quote = tokens[i][0]
@@ -144,13 +164,17 @@ def parse_quotes(tokens, i):
 
 
 def check_path(directory):
-    if directory.exists():
-        return True
-    else:
-        return False
+    '''
+    Checks if the path input is a valid path
+    '''
+    return directory.exists()
 
 
 def ask_path_again():
+    '''
+    Asks the user to input another path because the last
+    one was invlaid.
+    '''
     print("Invalid path. Please try again.\r")
     path = input("What is the full name (path included)"
                  " of the file you would like to load?\r\n")
@@ -159,6 +183,11 @@ def ask_path_again():
 
 
 def command_l():
+    '''
+    After the user inputs "L", it goes here and lists
+    more options that the user can do to list things in
+    a path.
+    '''
     print("Entered L mode!")
     path = input("What is the full name (path included)"
                  " of the file you would like to load?\r\n")
@@ -197,6 +226,9 @@ def command_l():
 
 
 def command_c():
+    '''
+    After the user inputs "C", it goes here and creates a file.
+    '''
     path = input("Entered C mode! What is the name of the "
                  "path where you would like to create a file?\r\n")
     directory = Path(path)
@@ -214,6 +246,10 @@ def command_c():
 
 
 def command_o():
+    '''
+    After the user inputs "O", it goes here and loads
+    an existing dsu file.
+    '''
     print("Entered O mode!")
     path = input("What is the full name (path included)"
                  " of the file you would like to load?\r\n")
@@ -222,6 +258,10 @@ def command_o():
 
 
 def command_e():
+    '''
+    After the user inputs "E", it goes here and provides
+    the user more options to edit their existing DSU file.
+    '''
     print("Entered E mode!")
     print("Here are the commands you can use:\r\n"
           "-usr \"username\": Change your username.\r\n"
@@ -244,6 +284,11 @@ def command_e():
 
 
 def command_p():
+    '''
+    After the user inputs "P", it goes here and provides
+    the user more options to print parts of their 
+    existing DSU file.
+    '''
     print("Entered P mode!")
     print("Here are the commands you can use:\r\n"
           "-usr: Print the current username.\r\n"
@@ -267,6 +312,11 @@ def command_p():
 
 
 def command_r():
+    '''
+    After the user inputs "R", it goes here and asks the
+    user for a file that they would like to read the
+    contents of.
+    '''
     print("Entered R mode!")
     path = input("What is the full name (path included)"
                  " of the file you would like to load?\r\n")
@@ -275,6 +325,10 @@ def command_r():
 
 
 def command_d():
+    '''
+    After the user inputs "D", it goes here and asks the
+    user for a file that they would like to delete.
+    '''
     print("Entered D mode!")
     path = input("What is the full name (path included)"
                  " of the file you would like to load?\r\n")
@@ -283,6 +337,9 @@ def command_d():
 
 
 def main():
+    '''
+    Prints a menu and asks the user for input to start.
+    '''
     print("Welcome! ", end="")
     while True:
         command = print_options().upper()
@@ -293,7 +350,7 @@ def main():
         if command == "Q":
             print("Goodbye!")
             return
-        elif command == "ADMIN":
+        if command == "ADMIN":
             print("Succesfully entered admin mode.\r")
             ui.run()
         elif command == "L":
