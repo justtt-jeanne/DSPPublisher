@@ -6,8 +6,8 @@ import socket
 import ds_protocol
 import Profile
 
-token = None
-current_profile = None
+TOKEN = None
+CURRENT_PROFILE = None
 
 
 def send(server: str, port: int, username: str,
@@ -24,7 +24,7 @@ def send(server: str, port: int, username: str,
     '''
     # Returns either True or False
     # depending on results of required operation
-    global token
+    global TOKEN
     try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((server, port))
@@ -47,8 +47,8 @@ def send(server: str, port: int, username: str,
         if resp.type != "ok":
             return False
         else:
-            if not token:
-                token = resp.token
+            if not TOKEN:
+                TOKEN = resp.token
             if message is not None:
                 recv, send = post_json(send, recv, message)
                 resp = ds_protocol.extract_json(recv.readline())
@@ -63,3 +63,41 @@ def send(server: str, port: int, username: str,
         return False
     client.close()
     return True
+
+
+def join_json(client, username, password):
+    global CURRENT_PROFILE
+    profile = Profile.Profile()
+    profile.username = username
+    profile.password = password
+    CURRENT_PROFILE = profile
+    join_msg = (
+        f"{{\"join\": {{\"username\":\"{username}\"" +
+        f",\"password\":\"{password}\", \"token\":\"\"}}}}")
+    send = client.makefile('w')
+    recv = client.makefile('r')
+    send.write(join_msg + '\r\n')
+    send.flush()
+    return recv, send
+
+
+def post_json(send, recv, message):
+    post = Profile.Post()
+    post.set_entry(message)
+    post_msg = (
+        f"{{\"token\":\"{TOKEN}\", \"post\": {{\"entry\": " +
+        f"\"{post.get_entry()}\", \"timestamp\": {post.get_time()}" + "}}")
+    CURRENT_PROFILE.add_post(post)
+    send.write(post_msg + '\r\n')
+    send.flush()
+    return recv, send
+
+
+def bio_json(send, recv, bio):
+    bio_msg = (
+        f"{{\"token\":\"{TOKEN}\", \"bio\": {{\"entry\": \""
+        + f"{bio}\", \"timestamp\": \"\"" + "}}")
+    CURRENT_PROFILE.bio = bio
+    send.write(bio_msg + '\r\n')
+    send.flush()
+    return recv, send
