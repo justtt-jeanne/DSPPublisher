@@ -286,7 +286,7 @@ def command_e():
 def command_p():
     '''
     After the user inputs "P", it goes here and provides
-    the user more options to print parts of their 
+    the user more options to print parts of their
     existing DSU file.
     '''
     print("Entered P mode!")

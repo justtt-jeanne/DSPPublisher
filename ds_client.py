@@ -1,6 +1,13 @@
 # JEANNE NGUYEN
 # jeannen2@uci.edu
 # 57923737
+# pylint: disable=global-statement
+# pylint: disable=too-many-arguments, too-many-positional-arguments
+
+'''
+Connects a client to the server and sends posts or bios
+to the server to post or update bios
+'''
 
 import socket
 import ds_protocol
@@ -34,29 +41,25 @@ def send(server: str, port: int, username: str,
     except socket.gaierror:
         print("Server/Port does not exist")
         return False
-    except ConnectionRefusedError:
-        print("Server rejected client.")
-        return False
     except TimeoutError:
         print("Timed out.")
         return False
-    recv, send = join_json(client, username, password)
+    recv, sender = join_json(client, username, password)
     resp = ds_protocol.extract_json(recv.readline())
     print(resp.message)
     try:
         if resp.type != "ok":
             return False
-        else:
-            if not TOKEN:
-                TOKEN = resp.token
-            if message is not None:
-                recv, send = post_json(send, recv, message)
-                resp = ds_protocol.extract_json(recv.readline())
-                print(resp.message)
-            if bio is not None:
-                recv, send = bio_json(send, recv, bio)
-                resp = ds_protocol.extract_json(recv.readline())
-                print(resp.message)
+        if not TOKEN:
+            TOKEN = resp.token
+        if message is not None:
+            recv, sender = post_json(sender, recv, message)
+            resp = ds_protocol.extract_json(recv.readline())
+            print(resp.message)
+        if bio is not None:
+            recv, sender = bio_json(sender, recv, bio)
+            resp = ds_protocol.extract_json(recv.readline())
+            print(resp.message)
     except AttributeError:
         print("Error")
         client.close()
@@ -66,6 +69,10 @@ def send(server: str, port: int, username: str,
 
 
 def join_json(client, username, password):
+    '''
+    Formats a json string to send to the server to allow
+    the client to join the server
+    '''
     global CURRENT_PROFILE
     profile = Profile.Profile()
     profile.username = username
@@ -74,30 +81,36 @@ def join_json(client, username, password):
     join_msg = (
         f"{{\"join\": {{\"username\":\"{username}\"" +
         f",\"password\":\"{password}\", \"token\":\"\"}}}}")
-    send = client.makefile('w')
+    sender = client.makefile('w')
     recv = client.makefile('r')
-    send.write(join_msg + '\r\n')
-    send.flush()
-    return recv, send
+    sender.write(join_msg + '\r\n')
+    sender.flush()
+    return recv, sender
 
 
-def post_json(send, recv, message):
+def post_json(sender, recv, message):
+    '''
+    Formats a json string to send to the server to post something
+    '''
     post = Profile.Post()
     post.set_entry(message)
     post_msg = (
         f"{{\"token\":\"{TOKEN}\", \"post\": {{\"entry\": " +
         f"\"{post.get_entry()}\", \"timestamp\": {post.get_time()}" + "}}")
     CURRENT_PROFILE.add_post(post)
-    send.write(post_msg + '\r\n')
-    send.flush()
-    return recv, send
+    sender.write(post_msg + '\r\n')
+    sender.flush()
+    return recv, sender
 
 
-def bio_json(send, recv, bio):
+def bio_json(sender, recv, bio):
+    '''
+    Formats a json string to send to the server to update the bio
+    '''
     bio_msg = (
         f"{{\"token\":\"{TOKEN}\", \"bio\": {{\"entry\": \""
         + f"{bio}\", \"timestamp\": \"\"" + "}}")
     CURRENT_PROFILE.bio = bio
-    send.write(bio_msg + '\r\n')
-    send.flush()
-    return recv, send
+    sender.write(bio_msg + '\r\n')
+    sender.flush()
+    return recv, sender
