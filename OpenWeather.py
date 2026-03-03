@@ -6,6 +6,7 @@ Handles Weather API and FM API,  as well as the function to get
 the JSON from the urls.
 '''
 
+import sys
 import json
 import urllib.request
 import urllib.error
@@ -64,19 +65,24 @@ class OpenWeather:
             self._json = json.loads(json_results)
             response.close()
         except urllib.error.HTTPError as e:
-            print('Failed to download contents of URL')
-            print('Status code: {}'.format(e.code))
+            raise urllib.error.HTTPError('Failed to download contents of URL\n'
+                                         'Status code: {}'.format(e.code))
         except ConnectionError:
-            print("Loss of internet.")    
-        self.city = self._json['name']
-        self.temperature = self._json['main']['temp']
-        self.high_temperature = self._json['main']['temp_max']
-        self.low_temperature = self._json['main']['temp_min']
-        self.longitude = self._json['coord']['lon']
-        self.latitude = self._json['coord']['lat']
-        self.description = self._json['weather'][0]['description']
-        self.humidity = self._json['main']['humidity']
-        self.sunset = self._json['sys']['sunset']
+            raise ConnectionError("Loss of internet.")
+        try:
+            self.city = self._json['name']
+            self.temperature = self._json['main']['temp']
+            self.high_temperature = self._json['main']['temp_max']
+            self.low_temperature = self._json['main']['temp_min']
+            self.longitude = self._json['coord']['lon']
+            self.latitude = self._json['coord']['lat']
+            self.description = self._json['weather'][0]['description']
+            self.humidity = self._json['main']['humidity']
+            self.sunset = self._json['sys']['sunset']
+        except TypeError:
+            raise TypeError("Server did not return a json.")
+        except KeyError:
+            raise KeyError("Asked for an unknown key.")
 
 
 def main() -> None:
@@ -85,15 +91,32 @@ def main() -> None:
     apikey = "REDACTED"
     open_weather = OpenWeather(zipcode, ccode)
     open_weather.set_apikey(apikey)
-    open_weather.load_data()
-    
-    print(f"The temperature for {zipcode} is {open_weather.temperature} degrees")
-    print(f"The high for today in {zipcode} will be {open_weather.high_temperature} degrees")
-    print(f"The low for today in {zipcode} will be {open_weather.low_temperature} degrees")
-    print(f"The coordinates for {zipcode} are {open_weather.longitude} longitude and {open_weather.latitude} latitude")
-    print(f"The current weather for {zipcode} is {open_weather.description}")
-    print(f"The current humidity for {zipcode} is {open_weather.humidity}")
-    print(f"The sun will set in {open_weather.city} at {open_weather.sunset}")
+    try:
+        open_weather.load_data()
+    except urllib.error.HTTPError as e:
+        print(e)
+        sys.exit(0)
+    except ConnectionError as e:
+        print(e)
+        sys.exit(0)
+    except TypeError as e:
+        print(e)
+        sys.exit(0)
+    except KeyError as e:
+        print(e)
+        sys.exit(0)
+
+    try:
+        print(f"The temperature for {zipcode} is {open_weather.temperature} degrees")
+        print(f"The high for today in {zipcode} will be {open_weather.high_temperature} degrees")
+        print(f"The low for today in {zipcode} will be {open_weather.low_temperature} degrees")
+        print(f"The coordinates for {zipcode} are {open_weather.longitude} longitude and {open_weather.latitude} latitude")
+        print(f"The current weather for {zipcode} is {open_weather.description}")
+        print(f"The current humidity for {zipcode} is {open_weather.humidity}")
+        print(f"The sun will set in {open_weather.city} at {open_weather.sunset}")
+    except AttributeError:
+        print("Asked for an unknown attribute.")
+        sys.exit(0)
 
 
 if __name__ == '__main__':
