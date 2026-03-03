@@ -6,9 +6,7 @@ Handles Weather API and FM API,  as well as the function to get
 the JSON from the urls.
 '''
 
-import json
-import urllib.request
-import urllib.error
+import ds_protocol
 
 
 def OpenWeather():
@@ -31,33 +29,13 @@ def OpenWeather():
         self._sunset = None
 
 
-def _download_url(url_to_download: str) -> dict:
-    response = None
-    r_obj = None
-
-    try:
-        # url_request = urllib.request.Request(url_to_download)
-        response = urllib.request.urlopen(url_to_download)
-        json_results = response.read()
-        r_obj = json.loads(json_results)
-
-    except urllib.error.HTTPError as e:
-        print('Failed to download contents of URL')
-        print('Status code: {}'.format(e.code))
-
-    finally:
-        if response != None:
-            response.close()
-    
-    return r_obj
-
 def main() -> None:
     zip = "92697"
     ccode = "US"
     apikey = "REDACTED"
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zip},{ccode}&appid={apikey}"
 
-    weather_obj = _download_url(url)
+    weather_obj = ds_protocol._download_url(url)
     if weather_obj is not None:
         # ['weather'][0]['description']
         print(weather_obj)
