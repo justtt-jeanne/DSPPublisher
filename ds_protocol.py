@@ -14,7 +14,7 @@ from collections import namedtuple
 DataTuple = namedtuple('DataTuple', ['type', 'message', 'token'])
 
 
-def extract_json(json_msg: str) -> DataTuple:
+def _extract_server_json(json_msg: str) -> DataTuple:
     '''
     Call the json.loads function on a json
     string and convert it to a DataTuple object

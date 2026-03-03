@@ -45,7 +45,7 @@ def send(server: str, port: int, username: str,
         print("Timed out.")
         return False
     recv, sender = join_json(client, username, password)
-    resp = ds_protocol.extract_json(recv.readline())
+    resp = ds_protocol._extract_server_json(recv.readline())
     print(resp.message)
     try:
         if resp.type != "ok":
@@ -54,11 +54,11 @@ def send(server: str, port: int, username: str,
             TOKEN = resp.token
         if message is not None:
             recv, sender = post_json(sender, recv, message)
-            resp = ds_protocol.extract_json(recv.readline())
+            resp = ds_protocol._extract_server_json(recv.readline())
             print(resp.message)
         if bio is not None:
             recv, sender = bio_json(sender, recv, bio)
-            resp = ds_protocol.extract_json(recv.readline())
+            resp = ds_protocol._extract_server_json(recv.readline())
             print(resp.message)
     except AttributeError:
         print("Error")

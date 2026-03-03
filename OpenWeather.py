@@ -1,0 +1,67 @@
+# JEANNE NGUYEN
+# jeannen2@uci.edu
+# 57923737
+'''
+Handles Weather API and FM API,  as well as the function to get
+the JSON from the urls.
+'''
+
+import json
+import urllib.request
+import urllib.error
+
+
+def OpenWeather():
+    '''
+    Creating class that will store 
+    '''
+    def __init__(self):
+        '''
+        Initializing self variables
+        '''
+        self._apikey = None
+        self._city = None
+        self._temperature = 0
+        self._high_temperature = 0
+        self._low_temperature = 0
+        self._longitude = 0
+        self._latitude = 0
+        self._description = None
+        self._humidity = 0
+        self._sunset = None
+
+
+def _download_url(url_to_download: str) -> dict:
+    response = None
+    r_obj = None
+
+    try:
+        # url_request = urllib.request.Request(url_to_download)
+        response = urllib.request.urlopen(url_to_download)
+        json_results = response.read()
+        r_obj = json.loads(json_results)
+
+    except urllib.error.HTTPError as e:
+        print('Failed to download contents of URL')
+        print('Status code: {}'.format(e.code))
+
+    finally:
+        if response != None:
+            response.close()
+    
+    return r_obj
+
+def main() -> None:
+    zip = "92697"
+    ccode = "US"
+    apikey = "REDACTED"
+    url = f"http://api.openweathermap.org/data/2.5/weather?zip={zip},{ccode}&appid={apikey}"
+
+    weather_obj = _download_url(url)
+    if weather_obj is not None:
+        # ['weather'][0]['description']
+        print(weather_obj)
+
+
+if __name__ == '__main__':
+    main()
