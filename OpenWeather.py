@@ -49,19 +49,22 @@ class OpenWeather:
             self._json = json.loads(json_results)
             response.close()
         except urllib.error.HTTPError as e:
-            raise urllib.error.HTTPError('Failed to download contents of URL\n'
-                                         'Status code: {}'.format(e.code))
+            print('Failed to download contents of URL\n'
+                  'Status code: {}'.format(e.code))
+            sys.exit(0)
         except ConnectionError:
-            raise ConnectionError("Loss of internet.")
+            print("Loss of internet.")
+            sys.exit(0)
 
 
     def set_apikey(self, apikey):
         '''
         Sets the api key for the instance.
+        :param apikey: The apikey to set
         '''
         self._apikey = apikey
         self.url = f"http://api.openweathermap.org/data/2.5/weather" + \
-                    f"?zip={self.zipcode},{self.ccode}&appid={self._apikey}"
+                   f"?zip={self.zipcode},{self.ccode}&appid={self._apikey}"
 
 
     def load_data(self):
@@ -71,18 +74,31 @@ class OpenWeather:
         self._download_url()
         try:
             self.city = self._json['name']
-            self.temperature = self._json['main']['temp']
-            self.high_temperature = self._json['main']['temp_max']
-            self.low_temperature = self._json['main']['temp_min']
+            self.temperature = round(((1.8 * (float(self._json['main']['temp']) - 273)) + 32), 2)
+            self.high_temperature = round(((1.8 * (float(self._json['main']['temp_max']) - 273)) + 32), 2)
+            self.low_temperature = round(((1.8 * (float(self._json['main']['temp_min']) - 273)) + 32), 2)
             self.longitude = self._json['coord']['lon']
             self.latitude = self._json['coord']['lat']
             self.description = self._json['weather'][0]['description']
             self.humidity = self._json['main']['humidity']
             self.sunset = self._json['sys']['sunset']
         except TypeError:
-            raise TypeError("Server did not return a json.")
+            print("Server did not return a json.")
+            sys.exit(0)
         except KeyError:
-            raise KeyError("Server did not send a valid json.")
+            print("Server did not send a valid json.")
+            sys.exit(0)
+
+
+    def transclude(self, message: str) -> str:
+        '''
+        Replaces keywords in a message with associated API data.
+        :param message: The message to transclude
+
+        :returns: The transcluded message
+        '''
+        new_message = message.replace("@weather", self.description)
+        return new_message
 
 
 def main() -> None:
@@ -94,32 +110,22 @@ def main() -> None:
     apikey = "REDACTED"
     open_weather = OpenWeather(zipcode, ccode)
     open_weather.set_apikey(apikey)
-    try:
-        open_weather.load_data()
-    except urllib.error.HTTPError as e:
-        print(e)
-        sys.exit(0)
-    except ConnectionError as e:
-        print(e)
-        sys.exit(0)
-    except TypeError as e:
-        print(e)
-        sys.exit(0)
-    except KeyError as e:
-        print(e)
-        sys.exit(0)
-
+    open_weather.load_data()
     try:
         print(f"The temperature for {zipcode} is {open_weather.temperature} degrees")
         print(f"The high for today in {zipcode} will be {open_weather.high_temperature} degrees")
         print(f"The low for today in {zipcode} will be {open_weather.low_temperature} degrees")
-        print(f"The coordinates for {zipcode} are {open_weather.longitude} longitude and {open_weather.latitude} latitude")
+        print(f"The coordinates for {zipcode} are {open_weather.longitude} "
+              f"longitude and {open_weather.latitude} latitude")
         print(f"The current weather for {zipcode} is {open_weather.description}")
         print(f"The current humidity for {zipcode} is {open_weather.humidity}")
         print(f"The sun will set in {open_weather.city} at {open_weather.sunset}")
     except AttributeError:
         print("Asked for an unknown attribute.")
         sys.exit(0)
+    my_message = open_weather.transclude("Hello World! Today is the first day of the rest of my life. "
+                                         "It is outside @weather and I am thrilled!")
+    print(my_message)
 
 
 if __name__ == '__main__':
