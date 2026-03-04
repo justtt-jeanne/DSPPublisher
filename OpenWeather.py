@@ -11,9 +11,10 @@ import json
 import urllib.request
 import urllib.error
 import ds_protocol
+from WebAPI import WebAPI
 
 
-class OpenWeather:
+class OpenWeather(WebAPI):
     '''
     Creating class that will store weather information
     '''
@@ -23,9 +24,9 @@ class OpenWeather:
         '''
         self.zipcode = zipcode
         self.ccode = ccode
-        self._apikey = None
-        self.url = None
-        self._json = None
+        # self._apikey = None
+        # self.url = None
+        # self._json = None
         self.city = None
         self.temperature = 0
         self.high_temperature = 0
@@ -35,53 +36,25 @@ class OpenWeather:
         self.description = None
         self.humidity = 0
         self.sunset = None
-
-
-    def _download_url(self) -> None:
-        '''
-        Callable method tha opens the url and gets the json from the url.
-        Stores the json so it can be used later.
-        '''
-        response = None
-        try:
-            response = urllib.request.urlopen(self.url)
-            json_results = response.read()
-            self._json = json.loads(json_results)
-            response.close()
-        except urllib.error.HTTPError as e:
-            print('Failed to download contents of URL\n'
-                  'Status code: {}'.format(e.code))
-            sys.exit(0)
-        except ConnectionError:
-            print("Loss of internet.")
-            sys.exit(0)
-
-
-    def set_apikey(self, apikey):
-        '''
-        Sets the api key for the instance.
-        :param apikey: The apikey to set
-        '''
-        self._apikey = apikey
-        self.url = f"http://api.openweathermap.org/data/2.5/weather" + \
-                   f"?zip={self.zipcode},{self.ccode}&appid={self._apikey}"
+        super().__init__(f"http://api.openweathermap.org/data/2.5/weather" + \
+                         f"?zip={self.zipcode},{self.ccode}&appid=APIKEY")
 
 
     def load_data(self):
         '''
         Sets instance variables after calling _download_url from the instance json.
         '''
-        self._download_url()
+        my_json = self._download_url(self.url)
         try:
-            self.city = self._json['name']
-            self.temperature = round(((1.8 * (float(self._json['main']['temp']) - 273)) + 32), 2)
-            self.high_temperature = round(((1.8 * (float(self._json['main']['temp_max']) - 273)) + 32), 2)
-            self.low_temperature = round(((1.8 * (float(self._json['main']['temp_min']) - 273)) + 32), 2)
-            self.longitude = self._json['coord']['lon']
-            self.latitude = self._json['coord']['lat']
-            self.description = self._json['weather'][0]['description']
-            self.humidity = self._json['main']['humidity']
-            self.sunset = self._json['sys']['sunset']
+            self.city = my_json['name']
+            self.temperature = round(((1.8 * (float(my_json['main']['temp']) - 273)) + 32), 2)
+            self.high_temperature = round(((1.8 * (float(my_json['main']['temp_max']) - 273)) + 32), 2)
+            self.low_temperature = round(((1.8 * (float(my_json['main']['temp_min']) - 273)) + 32), 2)
+            self.longitude = my_json['coord']['lon']
+            self.latitude = my_json['coord']['lat']
+            self.description = my_json['weather'][0]['description']
+            self.humidity = my_json['main']['humidity']
+            self.sunset = my_json['sys']['sunset']
         except TypeError:
             print("Server did not return a json.")
             sys.exit(0)
@@ -92,9 +65,8 @@ class OpenWeather:
 
     def transclude(self, message: str) -> str:
         '''
-        Replaces keywords in a message with associated API data.
+        Replaces keywords in a message with associated API description.
         :param message: The message to transclude
-
         :returns: The transcluded message
         '''
         new_message = message.replace("@weather", self.description)
