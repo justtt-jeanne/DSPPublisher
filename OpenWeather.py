@@ -2,8 +2,8 @@
 # jeannen2@uci.edu
 # 57923737
 '''
-Handles Weather API and FM API,  as well as the function to get
-the JSON from the urls.
+Handles OpenWeather API by making a class instance that gets
+the JSON from the url.
 '''
 
 import sys
@@ -37,27 +37,11 @@ class OpenWeather:
         self.sunset = None
 
 
-    def _download_url(self) -> dict:
-        response = None
-        try:
-            response = urllib.request.urlopen(self.url)
-            json_results = response.read()
-            self._json = json.loads(json_results)
-            response.close()
-        except urllib.error.HTTPError as e:
-            print('Failed to download contents of URL')
-            print('Status code: {}'.format(e.code))
-        except ConnectionError:
-            print("Loss of internet.")
-
-
-    def set_apikey(self, apikey):
-        self._apikey = apikey
-        self.url = f"http://api.openweathermap.org/data/2.5/weather" + \
-                    f"?zip={self.zipcode},{self.ccode}&appid={self._apikey}"
-
-
-    def load_data(self):
+    def _download_url(self) -> None:
+        '''
+        Callable method tha opens the url and gets the json from the url.
+        Stores the json so it can be used later.
+        '''
         response = None
         try:
             response = urllib.request.urlopen(self.url)
@@ -69,6 +53,22 @@ class OpenWeather:
                                          'Status code: {}'.format(e.code))
         except ConnectionError:
             raise ConnectionError("Loss of internet.")
+
+
+    def set_apikey(self, apikey):
+        '''
+        Sets the api key for the instance.
+        '''
+        self._apikey = apikey
+        self.url = f"http://api.openweathermap.org/data/2.5/weather" + \
+                    f"?zip={self.zipcode},{self.ccode}&appid={self._apikey}"
+
+
+    def load_data(self):
+        '''
+        Sets instance variables after calling _download_url from the instance json.
+        '''
+        self._download_url()
         try:
             self.city = self._json['name']
             self.temperature = self._json['main']['temp']
@@ -82,10 +82,13 @@ class OpenWeather:
         except TypeError:
             raise TypeError("Server did not return a json.")
         except KeyError:
-            raise KeyError("Asked for an unknown key.")
+            raise KeyError("Server did not send a valid json.")
 
 
 def main() -> None:
+    '''
+    Test case with exceptions.
+    '''
     zipcode = "92697"
     ccode = "US"
     apikey = "REDACTED"
