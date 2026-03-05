@@ -209,6 +209,8 @@ def create_file(directory, flags):
         print("Bio must be at least 1 character. Please try again.")
         bio = input().split()
     bio = check_ow_and_lastfm(bio)
+    if bio is None:
+        return
     current_profile.bio = bio
     try:
         with open(current_path, "w") as file:
@@ -300,18 +302,19 @@ def edit_profile(flags):
                 print("Bio cannot be empty.")
                 return
             entry = check_ow_and_lastfm(entry)
-            print("Would you like to change bio online (y/n)?")
-            bio_online = input().lower()
-            if bio_online == "y":
-                bio = flags["-bio"]
-                ds_client.send(current_profile.dsuserver, current_port,
-                               current_profile.username,
-                               current_profile.password,
-                               None, bio)
-            elif bio_online != "n":
-                print("Invalid option. Quitting proccess.")
-            current_profile.bio = flags["-bio"]
-            print("Bio updated in file.")
+            if entry is not None:
+                print("Would you like to change bio online (y/n)?")
+                bio_online = input().lower()
+                if bio_online == "y":
+                    bio = flags["-bio"]
+                    ds_client.send(current_profile.dsuserver, current_port,
+                                current_profile.username,
+                                current_profile.password,
+                                None, bio)
+                elif bio_online != "n":
+                    print("Invalid option. Quitting proccess.")
+                current_profile.bio = flags["-bio"]
+                print("Bio updated in file.")
         if "-addpost" in flags:
             post = Profile.Post()
             entry = flags["-addpost"]
@@ -319,18 +322,19 @@ def edit_profile(flags):
                 print("Post cannot be empty.")
                 return
             entry = check_ow_and_lastfm(entry)
-            print("Would you like to post online (y/n)?")
-            online = input().lower()
-            if online == "y":
-                ds_client.send(current_profile.dsuserver, current_port,
-                               current_profile.username,
-                               current_profile.password,
-                               entry, None)
-            elif online != "n":
-                print("Invalid option. Quitting proccess.")
-            post.set_entry(entry)
-            current_profile.add_post(post)
-            print("Post added in file.")
+            if entry is not None:
+                print("Would you like to post online (y/n)?")
+                online = input().lower()
+                if online == "y":
+                    ds_client.send(current_profile.dsuserver, current_port,
+                                current_profile.username,
+                                current_profile.password,
+                                entry, None)
+                elif online != "n":
+                    print("Invalid option. Quitting proccess.")
+                post.set_entry(entry)
+                current_profile.add_post(post)
+                print("Post added in file.")
         if "-delpost" in flags:
             try:
                 delete_id = int(flags["-delpost"]) - 1
@@ -385,7 +389,14 @@ def check_transclude_ow(entry):
 
 
 def check_transclude_lastfm(entry):
-    pass
+    print("Please enter an API key for OpenWeather.")
+    apikey = input()
+    last_fm = LastFM.LastFM()
+    last_fm.set_apikey(apikey)
+    last_fm.load_data()
+    if last_fm.artist is None:
+        return
+    return last_fm.transclude(entry)
 
 
 
