@@ -208,6 +208,7 @@ def create_file(directory, flags):
     while not bio:
         print("Bio must be at least 1 character. Please try again.")
         bio = input().split()
+    bio = check_ow_and_lastfm(bio)
     current_profile.bio = bio
     try:
         with open(current_path, "w") as file:
@@ -298,27 +299,7 @@ def edit_profile(flags):
             if not flags["-bio"].strip():
                 print("Bio cannot be empty.")
                 return
-            if "@weather" in flags["-bio"]:
-                print("Would you like to change your location?")
-                location = input()
-                if location == "y":
-                    print("Please enter a zipcode.")
-                    zipcode = input()
-                    print(f"\"{zipcode}\"")
-                    print("Please enter a country code.")
-                    ccode = input()
-                    print(f"\"{zipcode}\"")
-                elif location != "n":
-                    print("Invalid option.")
-                    return
-                print("Please enter an API key for OpenWeather.")
-                apikey = input()
-                open_weather = OpenWeather.OpenWeather()
-                open_weather.set_apikey(apikey)
-                open_weather.load_data()
-                if open_weather.description is None:
-                    return
-                flags['-bio'] = open_weather.transclude(flags['-bio'])
+            entry = check_ow_and_lastfm(entry)
             print("Would you like to change bio online (y/n)?")
             bio_online = input().lower()
             if bio_online == "y":
@@ -337,6 +318,7 @@ def edit_profile(flags):
             if not entry.strip():
                 print("Post cannot be empty.")
                 return
+            entry = check_ow_and_lastfm(entry)
             print("Would you like to post online (y/n)?")
             online = input().lower()
             if online == "y":
@@ -369,6 +351,42 @@ def edit_profile(flags):
         print(e)
     except Profile.DsuProfileError:
         print("Profile does not exist. Please try again.")
+
+
+def check_ow_and_lastfm(entry):
+    if "@weather" in entry:
+        entry = check_transclude_ow(entry)
+    elif "@lastfm" in entry:
+        entry = check_transclude_lastfm(entry)
+    return entry
+
+
+def check_transclude_ow(entry):
+    print("Would you like to change your location?")
+    location = input()
+    if location == "y":
+        print("Please enter a zipcode.")
+        zipcode = input()
+        print(f"\"{zipcode}\"")
+        print("Please enter a country code.")
+        ccode = input()
+        print(f"\"{zipcode}\"")
+    elif location != "n":
+        print("Invalid option.")
+        return
+    print("Please enter an API key for OpenWeather.")
+    apikey = input()
+    open_weather = OpenWeather.OpenWeather()
+    open_weather.set_apikey(apikey)
+    open_weather.load_data()
+    if open_weather.description is None:
+        return
+    return open_weather.transclude(entry)
+
+
+def check_transclude_lastfm(entry):
+    pass
+
 
 
 def print_profile(flags):

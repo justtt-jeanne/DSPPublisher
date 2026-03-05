@@ -21,7 +21,7 @@ class LastFM(WebAPI):
         self.playcount = 0
         self.listeners = 0
         super().__init__(f"http://ws.audioscrobbler.com/2.0/?method=chart." + \
-                       f"gettopartists&api_key=APIKEY&format=json")
+                         f"gettopartists&api_key=APIKEY&format=json")
 
 
     def load_data(self):
