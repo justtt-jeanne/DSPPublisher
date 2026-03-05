@@ -7,10 +7,6 @@ the JSON from the url.
 '''
 
 from WebAPI import WebAPI
-import sys
-import json
-import urllib.request
-import urllib.error
 
 
 class LastFM(WebAPI):
@@ -39,10 +35,8 @@ class LastFM(WebAPI):
             self.listeners = my_json["artists"]["artist"][0]["listeners"]
         except TypeError:
             print("Server did not return a json.")
-            sys.exit(0)
         except KeyError:
             print("Server did not send a valid json.")
-            sys.exit(0)
     
 
     def transclude(self, message: str) -> str:

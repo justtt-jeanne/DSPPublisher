@@ -6,11 +6,6 @@ Handles OpenWeather API by making a class instance that gets
 the JSON from the url.
 '''
 
-import sys
-import json
-import urllib.request
-import urllib.error
-import ds_protocol
 from WebAPI import WebAPI
 
 
@@ -18,15 +13,12 @@ class OpenWeather(WebAPI):
     '''
     Creating class that will store weather information
     '''
-    def __init__(self, zipcode, ccode):
+    def __init__(self, zipcode="92697", ccode="US"):
         '''
         Initializing self variables
         '''
         self.zipcode = zipcode
         self.ccode = ccode
-        # self._apikey = None
-        # self.url = None
-        # self._json = None
         self.city = None
         self.temperature = 0
         self.high_temperature = 0
@@ -57,10 +49,8 @@ class OpenWeather(WebAPI):
             self.sunset = my_json['sys']['sunset']
         except TypeError:
             print("Server did not return a json.")
-            sys.exit(0)
         except KeyError:
             print("Server did not send a valid json.")
-            sys.exit(0)
 
 
     def transclude(self, message: str) -> str:
@@ -80,7 +70,7 @@ def main() -> None:
     zipcode = "92697"
     ccode = "US"
     apikey = "REDACTED"
-    open_weather = OpenWeather(zipcode, ccode)
+    open_weather = OpenWeather()
     open_weather.set_apikey(apikey)
     open_weather.load_data()
     try:
@@ -94,7 +84,6 @@ def main() -> None:
         print(f"The sun will set in {open_weather.city} at {open_weather.sunset}")
     except AttributeError:
         print("Asked for an unknown attribute.")
-        sys.exit(0)
     my_message = open_weather.transclude("Hello World! Today is the first day of the rest of my life. "
                                          "It is outside @weather and I am thrilled!")
     print(my_message)
