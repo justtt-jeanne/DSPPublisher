@@ -1,6 +1,11 @@
 # JEANNE NGUYEN
 # jeannen2@uci.edu
 # 57923737
+'''
+The underlying user interface for a4.py, the "admin mode".
+Has different functionst that a4.py calls on to execute
+what the user wants.
+'''
 
 from pathlib import Path
 import socket
@@ -13,20 +18,30 @@ valid_flags = {"-r", "-f", "-s", "-e", "-n", "-posts", "-post",
                "-usr", "-pwd", "-bio", "-addpost", "-delpost", "-all"}
 flags_with_parts = {"-s", "-n", "-usr", "-pwd",
                     "-bio", "-addpost", "-delpost"}
-current_profile = None
-current_path = None
-current_port = None
+CURRENT_PROFILE = None
+CURRENT_PATH = None
+CURRENT_PORT = None
 
 
 def trying_attribute(profile_command):
+    '''
+    A profile command (usually printing something)
+    is tried and if that attribute does not exist
+    in the profile, it will error.
+    '''
     try:
         profile_command
+        return True
     except AttributeError:
         print("No Profile loaded. Please try again.")
-        return
+        return False
 
 
 def parse_command():
+    '''
+    Splits the initial command, calls on some other splitting
+    commands for redundancy's sake.
+    '''
     tokens = input().split()
     if not tokens:
         return None
@@ -81,6 +96,9 @@ def parse_command():
 
 
 def parse_path(tokens, i):
+    '''
+    Called in parse_command(), get the the path.
+    '''
     path_parts = []
     while (i < len(tokens)) and (not tokens[i] in valid_flags):
         path_parts.append(tokens[i])
@@ -90,6 +108,11 @@ def parse_path(tokens, i):
 
 
 def parse_quotes(tokens, i):
+    '''
+    Called in parse_command(), get the message in
+    any argument that has a message that should be surrounded
+    by quotation marks.
+    '''
     value_parts = []
     if tokens[i].startswith('"') or tokens[i].startswith("'"):
         quote = tokens[i][0]
@@ -115,6 +138,10 @@ def parse_quotes(tokens, i):
 
 
 def list_directory(directory, flags):
+    '''
+    Lists the directory if the first command is L.
+    Handles -f, -s, -e, and -r.
+    '''
     if not directory.is_dir():
         print("Path does not exist. Please try again.")
         return
@@ -149,60 +176,62 @@ def list_directory(directory, flags):
 
 
 def create_file(directory, flags):
-    global current_profile, current_path, current_port
+    '''
+    Instantiates a new Profile object.
+    Only creates dsu files.
+    '''
+    global CURRENT_PROFILE, CURRENT_PATH, CURRENT_PORT
     file_created = False
     if not directory.is_dir():
         print("Path does not exist. Please try again.")
-        return
+        return None
     try:
         fle = flags["-n"]
     except KeyError:
         print("Wrong flag used. Please try again.")
-        return
-    full_file = fle + ".dsu"
-    file_path = Path(full_file)
+        return None
+    file_path = Path(fle + ".dsu")
     full_path = directory / file_path
-    current_path = full_path
-    if current_path.exists():
-        print(f"{current_path} already exists, switching to load mode.")
-        file_handler("O", current_path)
-        return
-    user_info = Profile.Profile()
-    current_profile = user_info
+    CURRENT_PATH = full_path
+    if CURRENT_PATH.exists():
+        print(f"{CURRENT_PATH} already exists, switching to load mode.")
+        file_handler("O", CURRENT_PATH)
+        return None
+    CURRENT_PROFILE = Profile.Profile()
     print("Please enter a dsuserver: ")
     server = input().split()
     while len(server) > 1:
         print("Servers cannot have spaces. Please try again.")
         server = input().split()
     true_server = "".join(server)
-    if current_port is None:
+    if CURRENT_PORT is None:
         print("Please enter a port: ")
-        current_port = int(input())
+        CURRENT_PORT = int(input())
     try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect((true_server, current_port))
+        client.connect((true_server, CURRENT_PORT))
         client.close()
     except socket.gaierror:
         print("Server/Port does not exist.")
-        current_port = None
-        return
+        CURRENT_PORT = None
+        return None
     except ConnectionRefusedError:
         print("Server rejected client.")
-        current_port = None
-        return
-    current_profile.dsuserver = true_server
+        CURRENT_PORT = None
+        return None
+    CURRENT_PROFILE.dsuserver = true_server
     print("Please enter a username: ")
     username = input().split()
     while not username:
         print("Username must be at least 1 character. Please try again.")
         username = input().split()
-    current_profile.username = "".join(username)
+    CURRENT_PROFILE.username = "".join(username)
     print("Please enter a password: ")
     password = input().split()
     while not password:
         print("Password must be at least 1 character. Please try again.")
         password = input().split()
-    current_profile.password = "".join(password)
+    CURRENT_PROFILE.password = "".join(password)
     print("Please enter a bio: ")
     bio = input()
     while not bio:
@@ -210,26 +239,29 @@ def create_file(directory, flags):
         bio = input().split()
     bio = check_ow_and_lastfm(bio)
     if bio is None:
-        return
-    current_profile.bio = bio
+        return None
+    CURRENT_PROFILE.bio = bio
     try:
-        with open(current_path, "w") as file:
+        with open(CURRENT_PATH, "w", encoding="utf-8") as file:
             pass
-        current_profile.save_profile(str(current_path))
+        CURRENT_PROFILE.save_profile(str(CURRENT_PATH))
     except Profile.DsuFileError as e:
         print(e)
-        return
+        return None
     except Profile.DsuProfileError:
         print("Profile does not exist. Please try again.")
-        return
-    if current_path.is_file():
-        print(current_path)
+        return None
+    if CURRENT_PATH.is_file():
+        print(CURRENT_PATH)
         file_created = True
-        return file_created
+    return file_created
 
 
 def file_handler(command, directory):
-    global current_path, current_profile, current_port
+    '''
+    Deletes, reads, or opens a dsu file.
+    '''
+    global CURRENT_PATH, CURRENT_PROFILE, CURRENT_PORT
     if not directory.is_file():
         print("Path does not exist. Please try again.")
         return
@@ -249,24 +281,24 @@ def file_handler(command, directory):
                 for line in file.readlines():
                     print(line)
     else:
-        if current_port is None:
+        if CURRENT_PORT is None:
             print("Please enter a port: ")
-            current_port = int(input())
-        current_profile = Profile.Profile()
+            CURRENT_PORT = int(input())
+        CURRENT_PROFILE = Profile.Profile()
         try:
-            current_path = directory
-            current_profile.load_profile(current_path)
+            CURRENT_PATH = directory
+            CURRENT_PROFILE.load_profile(CURRENT_PATH)
             try:
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect((current_profile.dsuserver, current_port))
+                client.connect((CURRENT_PROFILE.dsuserver, CURRENT_PORT))
                 client.close()
             except socket.gaierror:
                 print("Server/Port does not exist")
-                current_port = None
+                CURRENT_PORT = None
                 return
             except ConnectionRefusedError:
                 print("Server rejected client.")
-                current_port = None
+                CURRENT_PORT = None
                 return
             print("File successfully loaded.\n")
         except Profile.DsuFileError as e:
@@ -278,7 +310,13 @@ def file_handler(command, directory):
 
 
 def edit_profile(flags):
-    global current_profile, current_path
+    '''
+    Edits the current dsu profile.
+    Handles -usr, -pwd, -bio, -addpost, and -delpost.
+    Also asks the user if they would like to post their bio or post
+    to the web.
+    '''
+    global CURRENT_PROFILE
     required_flags = ["-usr", "-pwd", "-bio", "-addpost", "-delpost"]
     for flag in required_flags:
         if flag in flags and not flags[flag]:
@@ -289,13 +327,13 @@ def edit_profile(flags):
             if not flags["-usr"]:
                 print("Username must be at least 1 character.")
                 return
-            current_profile.username = flags["-usr"]
+            CURRENT_PROFILE.username = flags["-usr"]
             print("Username updated.")
         if "-pwd" in flags:
             if not flags["-pwd"]:
                 print("Username must be at least 1 character.")
                 return
-            current_profile.password = flags["-pwd"]
+            CURRENT_PROFILE.password = flags["-pwd"]
             print("Password updated.")
         if "-bio" in flags:
             if not flags["-bio"].strip():
@@ -307,13 +345,13 @@ def edit_profile(flags):
                 print("Would you like to change bio online (y/n)?")
                 bio_online = input().lower()
                 if bio_online == "y":
-                    ds_client.send(current_profile.dsuserver, current_port,
-                                current_profile.username,
-                                current_profile.password,
-                                None, bio)
+                    ds_client.send(CURRENT_PROFILE.dsuserver, CURRENT_PORT,
+                                   CURRENT_PROFILE.username,
+                                   CURRENT_PROFILE.password,
+                                   None, bio)
                 elif bio_online != "n":
                     print("Invalid option. Quitting proccess.")
-                current_profile.bio = bio
+                CURRENT_PROFILE.bio = bio
                 print("Bio updated in file.")
         if "-addpost" in flags:
             post = Profile.Post()
@@ -326,14 +364,14 @@ def edit_profile(flags):
                 print("Would you like to post online (y/n)?")
                 online = input().lower()
                 if online == "y":
-                    ds_client.send(current_profile.dsuserver, current_port,
-                                current_profile.username,
-                                current_profile.password,
-                                entry, None)
+                    ds_client.send(CURRENT_PROFILE.dsuserver, CURRENT_PORT,
+                                   CURRENT_PROFILE.username,
+                                   CURRENT_PROFILE.password,
+                                   entry, None)
                 elif online != "n":
                     print("Invalid option. Quitting proccess.")
                 post.set_entry(entry)
-                current_profile.add_post(post)
+                CURRENT_PROFILE.add_post(post)
                 print("Post added in file.")
         if "-delpost" in flags:
             try:
@@ -342,7 +380,7 @@ def edit_profile(flags):
             except ValueError:
                 print("Must be a valid integer. Please try again.")
                 return
-            deleted = current_profile.del_post(int(delete_id))
+            deleted = CURRENT_PROFILE.del_post(int(delete_id))
             if not deleted:
                 print("Invalid index. Please try again.")
                 return
@@ -350,7 +388,7 @@ def edit_profile(flags):
         print("No Profile loaded. Please try again.")
         return
     try:
-        current_profile.save_profile(str(current_path))
+        CURRENT_PROFILE.save_profile(str(CURRENT_PATH))
     except Profile.DsuFileError as e:
         print(e)
     except Profile.DsuProfileError:
@@ -358,6 +396,12 @@ def edit_profile(flags):
 
 
 def check_ow_and_lastfm(entry):
+    '''
+    Checks if the string attached to a flag
+    has keywords in it, then calls on other
+    functions to replace the keywords and
+    returns that string.
+    '''
     if "@weather" in entry:
         entry = check_transclude_ow(entry)
     elif "@lastfm" in entry:
@@ -366,70 +410,90 @@ def check_ow_and_lastfm(entry):
 
 
 def check_transclude_ow(entry):
+    '''
+    Asks user if they want to change their location
+    and for their API key for OpenWeather, and then
+    transcludes the keyword to the location's
+    description.
+    '''
     print("Would you like to change your location?")
     location = input()
+    print("Please enter an API key for OpenWeather.")
+    apikey = input()
     if location == "y":
         print("Please enter a zipcode.")
         zipcode = input()
-        print(f"\"{zipcode}\"")
         print("Please enter a country code.")
         ccode = input()
-        print(f"\"{zipcode}\"")
-    elif location != "n":
+        open_weather = OpenWeather.OpenWeather(zipcode, ccode)
+    elif location == "n":
+        open_weather = OpenWeather.OpenWeather()
+    else:
         print("Invalid option.")
-        return
-    print("Please enter an API key for OpenWeather.")
-    apikey = input()
-    open_weather = OpenWeather.OpenWeather()
+        return None
     open_weather.set_apikey(apikey)
     open_weather.load_data()
     if open_weather.description is None:
-        return
+        return None
     return open_weather.transclude(entry)
 
 
 def check_transclude_lastfm(entry):
+    '''
+    Asks userfor their API key for LastFM, and then
+    transcludes the keyword to the top artist name.
+    '''
     print("Please enter an API key for LastFM.")
     apikey = input()
     last_fm = LastFM.LastFM()
     last_fm.set_apikey(apikey)
     last_fm.load_data()
     if last_fm.artist is None:
-        return
+        return None
     return last_fm.transclude(entry)
 
 
-
 def print_profile(flags):
-    global current_profile, current_path
+    '''
+    Prints the current dsu profile.
+    Handles -usr, -pwd, -bio, -addpost, and -delpost.
+    Also asks the user if they would like to post their bio or post
+    to the web.
+    '''
+    global CURRENT_PROFILE, CURRENT_PATH
     if "-usr" in flags:
-        trying_attribute(print(current_profile.username))
+        successful = trying_attribute(print(CURRENT_PROFILE.username))
+        if not successful:
+            return
     if "-pwd" in flags:
-        print(current_profile.password)
+        successful = trying_attribute(print(CURRENT_PROFILE.password))
+        if not successful:
+            return
     if "-bio" in flags:
-        print(current_profile.bio)
+        successful = trying_attribute(print(CURRENT_PROFILE.bio))
+        if not successful:
+            return
         print("Would you like this bio to be online (y/n)?")
         bio_online = input().lower()
         if bio_online == "y":
-            bio = flags["-bio"]
-            ds_client.send(current_profile.dsuserver, current_port,
-                            current_profile.username,
-                            current_profile.password,
-                            None, current_profile.bio)
+            ds_client.send(CURRENT_PROFILE.dsuserver, CURRENT_PORT,
+                           CURRENT_PROFILE.username,
+                           CURRENT_PROFILE.password,
+                           None, CURRENT_PROFILE.bio)
         elif bio_online != "n":
             print("Invalid option. Quitting proccess.")
     if "-posts" in flags:
-        posts = current_profile.get_posts()
+        posts = CURRENT_PROFILE.get_posts()
         for item in posts:
             print(item.get_entry())
     if "-post" in flags:
-        id = flags["-post"]
+        single_id = flags["-post"]
         try:
-            post_id = int(id) - 1
+            post_id = int(single_id) - 1
         except ValueError:
             print("ERROR: Post ID must be an integer")
             return
-        posts = current_profile.get_posts()
+        posts = CURRENT_PROFILE.get_posts()
         if post_id < 0 or post_id >= len(posts):
             print("ERROR: Invalid post ID")
             return
@@ -437,18 +501,18 @@ def print_profile(flags):
         print("Would you like this post to be online (y/n)?")
         online = input().lower()
         if online == "y":
-            ds_client.send(current_profile.dsuserver, current_port,
-                            current_profile.username,
-                            current_profile.password,
-                            posts[post_id].get_entry(), None)
+            ds_client.send(CURRENT_PROFILE.dsuserver, CURRENT_PORT,
+                           CURRENT_PROFILE.username,
+                           CURRENT_PROFILE.password,
+                           posts[post_id].get_entry(), None)
         elif online != "n":
-                print("Invalid option. Quitting proccess.")
+            print("Invalid option. Quitting proccess.")
     if "-all" in flags:
-        print(f"DsuServer: {current_profile.dsuserver}")
-        print(f"Username: {current_profile.username}")
-        print(f"Password: {current_profile.password}")
-        print(f"Bio: {current_profile.bio}")
-        posts = current_profile.get_posts()
+        print(f"DsuServer: {CURRENT_PROFILE.dsuserver}")
+        print(f"Username: {CURRENT_PROFILE.username}")
+        print(f"Password: {CURRENT_PROFILE.password}")
+        print(f"Bio: {CURRENT_PROFILE.bio}")
+        posts = CURRENT_PROFILE.get_posts()
         print("Posts: ", end="")
         for item in posts:
             print(item.get_entry(), end=" ")
@@ -456,7 +520,10 @@ def print_profile(flags):
 
 
 def run():
-    global current_path, current_profile
+    '''
+    Admin mode. Finds the first command and does the
+    corresponding function.
+    '''
     while True:
         parsed = parse_command()
         if not parsed:
@@ -474,7 +541,7 @@ def run():
         elif cmd in ("D", "R", "O"):
             file_handler(cmd, path)
         elif cmd == "E":
-            if current_profile is None:
+            if CURRENT_PROFILE is None:
                 print("ERROR")
                 continue
             try:
@@ -486,7 +553,7 @@ def run():
                 print("ERROR")
                 continue
         elif cmd == "P":
-            if current_profile is None:
+            if CURRENT_PROFILE is None:
                 print("ERROR")
                 continue
             try:

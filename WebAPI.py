@@ -1,6 +1,11 @@
 # JEANNE NGUYEN
 # jeannen2@uci.edu
 # 57923737
+# pylint: disable=invalid-name
+'''
+Makes the super class for OpenWeather and LastFM with modules
+the classes instantiated in those modules can inherit.
+'''
 
 from abc import ABC
 from abc import abstractmethod
@@ -25,7 +30,6 @@ class WebAPI(ABC):
         self.url = url
         self._json = None
 
-
     def _download_url(self, url: str) -> dict:
         '''
         Callable method tha opens the url and gets the json from the url.
@@ -33,21 +37,19 @@ class WebAPI(ABC):
         '''
         response = None
         try:
-            response = urllib.request.urlopen(url)
-            json_results = response.read()
-            my_json = json.loads(json_results)
-            response.close()
+            with urllib.request.urlopen(url) as response:
+                json_results = response.read()
+                my_json = json.loads(json_results)
         except urllib.error.HTTPError as e:
-            print('Failed to download contents of URL\n'
-                  'Status code: {}'.format(e.code))
-            return
+            print('Failed to download contents of URL\n' +
+                  f'Status code: {e.code}')
+            return None
         except ConnectionError:
             print("Loss of internet.")
-            return
+            return None
         return my_json
 
-
-    def set_apikey(self, apikey:str) -> None:
+    def set_apikey(self, apikey: str) -> None:
         '''
         Sets the api key for the instance.
         :param apikey: The apikey to set
@@ -56,20 +58,16 @@ class WebAPI(ABC):
         url = self.url
         self.url = url.replace("APIKEY", self._apikey)
 
-
     @abstractmethod
     def load_data(self):
         '''
         The load_data method is an abstract method that changes
         through each instance of the WebAPI class
         '''
-        pass
-
 
     @abstractmethod
-    def transclude(self, message:str) -> str:
+    def transclude(self, message: str) -> str:
         '''
         The transclude method is an abstract method that changes
         through each instance of the WebAPI class
         '''
-        pass

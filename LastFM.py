@@ -1,6 +1,8 @@
 # JEANNE NGUYEN
 # jeannen2@uci.edu
 # 57923737
+# pylint: disable=invalid-name
+# apikey = "REDACTED"
 '''
 Handles LastFM API by making a class instance that gets
 the JSON from the url.
@@ -20,13 +22,13 @@ class LastFM(WebAPI):
         self.artist = None
         self.playcount = 0
         self.listeners = 0
-        super().__init__(f"http://ws.audioscrobbler.com/2.0/?method=chart." + \
-                         f"gettopartists&api_key=APIKEY&format=json")
-
+        super().__init__("http://ws.audioscrobbler.com/2.0/?method=chart." +
+                         "gettopartists&api_key=APIKEY&format=json")
 
     def load_data(self):
         '''
-        Sets instance variables after calling _download_url from the instance json.
+        Sets instance variables after
+        calling _download_url from the instance json.
         '''
         my_json = self._download_url(self.url)
         if my_json is not None:
@@ -39,7 +41,6 @@ class LastFM(WebAPI):
             except KeyError:
                 print("Server did not send a valid json.")
 
-
     def transclude(self, message: str) -> str:
         '''
         Replaces keywords in a message with associated API description.
@@ -48,19 +49,3 @@ class LastFM(WebAPI):
         '''
         new_message = message.replace("@lastfm", self.artist)
         return new_message
-
-
-def main() -> None:
-    apikey = "REDACTED"
-    fm_obj = LastFM()
-    fm_obj.set_apikey(apikey)
-    fm_obj.load_data()
-    print(f"The top artist is {fm_obj.artist}")
-    print(f"{fm_obj.artist}'s total playcount is {fm_obj.playcount}")
-    print(f"{fm_obj.artist}'s amount of listeners is {fm_obj.listeners}")
-    my_message = fm_obj.transclude("My favorite arist right now is @lastfm!")
-    print(my_message)
-
-
-if __name__ == '__main__':
-    main()

@@ -14,7 +14,7 @@ from collections import namedtuple
 DataTuple = namedtuple('DataTuple', ['type', 'message', 'token'])
 
 
-def _extract_server_json(json_msg: str) -> DataTuple:
+def extract_server_json(json_msg: str) -> DataTuple:
     '''
     Call the json.loads function on a json
     string and convert it to a DataTuple object
@@ -36,7 +36,3 @@ def _extract_server_json(json_msg: str) -> DataTuple:
     except json.JSONDecodeError:
         print("Json cannot be decoded.")
         return None
-
-
-def _extract_weather_json(json_msg: str, desired_aspect: str):
-    pass
