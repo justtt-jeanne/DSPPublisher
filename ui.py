@@ -301,19 +301,19 @@ def edit_profile(flags):
             if not flags["-bio"].strip():
                 print("Bio cannot be empty.")
                 return
-            entry = check_ow_and_lastfm(entry)
-            if entry is not None:
+            bio = flags["-bio"]
+            bio = check_ow_and_lastfm(bio)
+            if bio is not None:
                 print("Would you like to change bio online (y/n)?")
                 bio_online = input().lower()
                 if bio_online == "y":
-                    bio = flags["-bio"]
                     ds_client.send(current_profile.dsuserver, current_port,
                                 current_profile.username,
                                 current_profile.password,
                                 None, bio)
                 elif bio_online != "n":
                     print("Invalid option. Quitting proccess.")
-                current_profile.bio = flags["-bio"]
+                current_profile.bio = bio
                 print("Bio updated in file.")
         if "-addpost" in flags:
             post = Profile.Post()
@@ -389,7 +389,7 @@ def check_transclude_ow(entry):
 
 
 def check_transclude_lastfm(entry):
-    print("Please enter an API key for OpenWeather.")
+    print("Please enter an API key for LastFM.")
     apikey = input()
     last_fm = LastFM.LastFM()
     last_fm.set_apikey(apikey)
