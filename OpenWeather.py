@@ -37,20 +37,24 @@ class OpenWeather(WebAPI):
         Sets instance variables after calling _download_url from the instance json.
         '''
         my_json = self._download_url(self.url)
-        try:
-            self.city = my_json['name']
-            self.temperature = round(((1.8 * (float(my_json['main']['temp']) - 273)) + 32), 2)
-            self.high_temperature = round(((1.8 * (float(my_json['main']['temp_max']) - 273)) + 32), 2)
-            self.low_temperature = round(((1.8 * (float(my_json['main']['temp_min']) - 273)) + 32), 2)
-            self.longitude = my_json['coord']['lon']
-            self.latitude = my_json['coord']['lat']
-            self.description = my_json['weather'][0]['description']
-            self.humidity = my_json['main']['humidity']
-            self.sunset = my_json['sys']['sunset']
-        except TypeError:
-            print("Server did not return a json.")
-        except KeyError:
-            print("Server did not send a valid json.")
+        if my_json is not None:
+            try:
+                self.city = my_json['name']
+                self.temperature = round(((1.8 * (float(my_json['main']['temp'])
+                                                  - 273)) + 32), 2)
+                self.hi_temperature = round(((1.8 * (float(my_json['main']['temp_max'])
+                                                       - 273)) + 32), 2)
+                self.low_temperature = round(((1.8 * (float(my_json['main']['temp_min'])
+                                                      - 273)) + 32), 2)
+                self.longitude = my_json['coord']['lon']
+                self.latitude = my_json['coord']['lat']
+                self.description = my_json['weather'][0]['description']
+                self.humidity = my_json['main']['humidity']
+                self.sunset = my_json['sys']['sunset']
+            except TypeError:
+                print("Server did not return a json.")
+            except KeyError:
+                print("Server did not send a valid json.")
 
 
     def transclude(self, message: str) -> str:
@@ -75,8 +79,10 @@ def main() -> None:
     open_weather.load_data()
     try:
         print(f"The temperature for {zipcode} is {open_weather.temperature} degrees")
-        print(f"The high for today in {zipcode} will be {open_weather.high_temperature} degrees")
-        print(f"The low for today in {zipcode} will be {open_weather.low_temperature} degrees")
+        print(f"The high for today in {zipcode} will be "
+              f"{open_weather.high_temperature} degrees")
+        print(f"The low for today in {zipcode} will be "
+              f"{open_weather.low_temperature} degrees")
         print(f"The coordinates for {zipcode} are {open_weather.longitude} "
               f"longitude and {open_weather.latitude} latitude")
         print(f"The current weather for {zipcode} is {open_weather.description}")
@@ -84,7 +90,7 @@ def main() -> None:
         print(f"The sun will set in {open_weather.city} at {open_weather.sunset}")
     except AttributeError:
         print("Asked for an unknown attribute.")
-    my_message = open_weather.transclude("Hello World! Today is the first day of the rest of my life. "
+    my_message = open_weather.transclude("Hello World! "
                                          "It is outside @weather and I am thrilled!")
     print(my_message)
 

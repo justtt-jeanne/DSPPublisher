@@ -7,7 +7,6 @@ from abc import abstractmethod
 import urllib.request
 import urllib.error
 import json
-import sys
 
 
 class WebAPI(ABC):
@@ -41,10 +40,10 @@ class WebAPI(ABC):
         except urllib.error.HTTPError as e:
             print('Failed to download contents of URL\n'
                   'Status code: {}'.format(e.code))
-            sys.exit(0)
+            return
         except ConnectionError:
             print("Loss of internet.")
-            sys.exit(0)
+            return
         return my_json
 
 

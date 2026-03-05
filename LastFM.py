@@ -29,15 +29,16 @@ class LastFM(WebAPI):
         Sets instance variables after calling _download_url from the instance json.
         '''
         my_json = self._download_url(self.url)
-        try:
-            self.artist = my_json["artists"]["artist"][0]["name"]
-            self.playcount = my_json["artists"]["artist"][0]["playcount"]
-            self.listeners = my_json["artists"]["artist"][0]["listeners"]
-        except TypeError:
-            print("Server did not return a json.")
-        except KeyError:
-            print("Server did not send a valid json.")
-    
+        if my_json is not None:
+            try:
+                self.artist = my_json["artists"]["artist"][0]["name"]
+                self.playcount = my_json["artists"]["artist"][0]["playcount"]
+                self.listeners = my_json["artists"]["artist"][0]["listeners"]
+            except TypeError:
+                print("Server did not return a json.")
+            except KeyError:
+                print("Server did not send a valid json.")
+
 
     def transclude(self, message: str) -> str:
         '''

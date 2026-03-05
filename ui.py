@@ -6,6 +6,8 @@ from pathlib import Path
 import socket
 import Profile
 import ds_client
+import OpenWeather
+import LastFM
 
 valid_flags = {"-r", "-f", "-s", "-e", "-n", "-posts", "-post",
                "-usr", "-pwd", "-bio", "-addpost", "-delpost", "-all"}
@@ -296,6 +298,27 @@ def edit_profile(flags):
             if not flags["-bio"].strip():
                 print("Bio cannot be empty.")
                 return
+            if "@weather" in flags["-bio"]:
+                print("Would you like to change your location?")
+                location = input()
+                if location == "y":
+                    print("Please enter a zipcode.")
+                    zipcode = input()
+                    print(f"\"{zipcode}\"")
+                    print("Please enter a country code.")
+                    ccode = input()
+                    print(f"\"{zipcode}\"")
+                elif location != "n":
+                    print("Invalid option.")
+                    return
+                print("Please enter an API key for OpenWeather.")
+                apikey = input()
+                open_weather = OpenWeather.OpenWeather()
+                open_weather.set_apikey(apikey)
+                open_weather.load_data()
+                if open_weather.description is None:
+                    return
+                flags['-bio'] = open_weather.transclude(flags['-bio'])
             print("Would you like to change bio online (y/n)?")
             bio_online = input().lower()
             if bio_online == "y":
