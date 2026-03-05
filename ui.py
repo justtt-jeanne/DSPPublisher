@@ -24,6 +24,10 @@ CURRENT_PORT = None
 
 
 def check_num_posts():
+    '''
+    Returns the number of posts in the profile.
+    Not called within this module.
+    '''
     return len(CURRENT_PROFILE.get_posts())
 
 
