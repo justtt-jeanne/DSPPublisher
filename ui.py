@@ -23,6 +23,10 @@ CURRENT_PATH = None
 CURRENT_PORT = None
 
 
+def check_num_posts():
+    return len(CURRENT_PROFILE.get_posts())
+
+
 def trying_attribute(profile_command):
     '''
     A profile command (usually printing something)
