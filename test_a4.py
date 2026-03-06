@@ -7,10 +7,12 @@ Testing all (probably closer to 70%) of all the code across
 all the different modules
 '''
 
+from pathlib import Path
 import unittest
 import LastFM
 import OpenWeather
 import a4
+import ui
 
 
 class Test_TestingAPIs(unittest.TestCase):
@@ -148,6 +150,9 @@ class Test_TestingCommandParsing(unittest.TestCase):
         assert a4.parse_command_p("-post 1 -usr") == {
             "-post": "1", "-usr": True
         }
+
+    def test_quoted_ui(self):
+        assert ui.parse_quotes("'hi'", 0) == (" h i ", 4)
 
 
 # if __name__ == "__main__":
