@@ -1,29 +1,45 @@
 # JEANNE NGUYEN
 # jeannen2@uci.edu
 # 57923737
+# pylint: disable=invalid-name, protected-access
 '''
 Testing all (probably closer to 70%) of all the code across
 all the different modules
 '''
 
 import unittest
-import LastFM 
+import LastFM
 import OpenWeather
-import WebAPI
 
 
 class Test_TestingAPIs(unittest.TestCase):
+    '''
+    Testing class that tests any API related information/
+    OpenWeather and LastFM.
+    '''
     def test_openweather_set_api(self):
+        '''
+        @private
+        Makes sure the apikey is set correctly in OpenWeather
+        '''
         open_weather = OpenWeather.OpenWeather()
         open_weather.set_apikey("REDACTED")
         assert open_weather._apikey == "REDACTED"
 
     def test_lastfm_set_api(self):
+        '''
+        @private
+        Makes sure the apikey is set correctly in LastFM
+        '''
         last_fm = LastFM.LastFM()
         last_fm.set_apikey("REDACTED")
         assert last_fm._apikey == "REDACTED"
 
     def test_openweather_url(self):
+        '''
+        @private
+        Makes sure the url is set correctly in OpenWeather
+        '''
         open_weather = OpenWeather.OpenWeather()
         open_weather.set_apikey("REDACTED")
         open_weather.load_data()
@@ -33,6 +49,10 @@ class Test_TestingAPIs(unittest.TestCase):
                                     "=REDACTED")
 
     def test_lastfm_url(self):
+        '''
+        @private
+        Makes sure the url is set correctly in LastFM
+        '''
         last_fm = LastFM.LastFM()
         last_fm.set_apikey("REDACTED")
         last_fm.load_data()
@@ -42,18 +62,30 @@ class Test_TestingAPIs(unittest.TestCase):
                                "&format=json")
 
     def test_openweather_invalid_api(self):
+        '''
+        @private
+        Makes sure an error is caught in OpenWeather
+        '''
         open_weather = OpenWeather.OpenWeather()
         open_weather.set_apikey("123")
         open_weather.load_data()
         assert open_weather.description is None
 
     def test_lastfm_invalid_api(self):
+        '''
+        @private
+        Makes sure an error is caught in LastFM
+        '''
         last_fm = LastFM.LastFM()
         last_fm.set_apikey("123")
         last_fm.load_data()
         assert last_fm.artist is None
 
     def test_openweather_transclude(self):
+        '''
+        @private
+        Makes sure the transclusion is succesful in OpenWeather
+        '''
         open_weather = OpenWeather.OpenWeather()
         open_weather.set_apikey("REDACTED")
         open_weather.load_data()
@@ -61,6 +93,10 @@ class Test_TestingAPIs(unittest.TestCase):
         assert "@weather" not in result
 
     def test_lastfm_transclude(self):
+        '''
+        @private
+        Makes sure the transclusion is succesful in OpenWeather
+        '''
         last_fm = LastFM.LastFM()
         last_fm.set_apikey("REDACTED")
         last_fm.load_data()

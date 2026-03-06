@@ -17,6 +17,7 @@ class OpenWeather(WebAPI):
     '''
     def __init__(self, zipcode="92697", ccode="US"):
         '''
+        @private
         Initializing self variables
         '''
         self.zipcode = zipcode

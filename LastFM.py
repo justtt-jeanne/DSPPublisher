@@ -17,6 +17,7 @@ class LastFM(WebAPI):
     '''
     def __init__(self):
         '''
+        @private
         Initializing self variables
         '''
         self.artist = None
