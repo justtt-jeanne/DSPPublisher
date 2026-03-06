@@ -111,7 +111,7 @@ class Test_TestingCommandParsing(unittest.TestCase):
 
     def test_missing_e_command_l(self):
         assert a4.parse_command_l("-e") is None
-    
+
     def test_missing_s_command_l(self):
         assert a4.parse_command_l("-s") is None
 
@@ -124,8 +124,30 @@ class Test_TestingCommandParsing(unittest.TestCase):
     def test_empty_command_e(self):
         assert a4.parse_command_e("") is None
 
+    def test_missing_arg_command_e(self):
+        assert a4.parse_command_e("-usr") is None
+
+    def test_invalid_flag_command_e(self):
+        assert a4.parse_command_e("-p") is None
+
+    def test_valid_command_e(self):
+        assert a4.parse_command_e("-usr \"hi there\"") == {
+            "-usr": "hithere"
+        }
+
     def test_empty_command_p(self):
         assert a4.parse_command_p("") is None
+
+    def test_missing_arg_command_p(self):
+        assert a4.parse_command_p("-post") is None
+
+    def test_invalid_flag_command_p(self):
+        assert a4.parse_command_p("-p") is None
+
+    def test_valid_command_p(self):
+        assert a4.parse_command_p("-post 1 -usr") == {
+            "-post": "1", "-usr": True
+        }
 
 
 # if __name__ == "__main__":
