@@ -10,6 +10,7 @@ all the different modules
 import unittest
 import LastFM
 import OpenWeather
+import a4
 
 
 class Test_TestingAPIs(unittest.TestCase):
@@ -102,6 +103,29 @@ class Test_TestingAPIs(unittest.TestCase):
         last_fm.load_data()
         result = last_fm.transclude("Testing lastFM: @lastfm")
         assert "@lastfm" not in result
+
+
+class Test_TestingCommandParsing(unittest.TestCase):
+    def test_empty_command_l(self):
+        assert a4.parse_command_l("") is None
+
+    def test_missing_e_command_l(self):
+        assert a4.parse_command_l("-e") is None
+    
+    def test_missing_s_command_l(self):
+        assert a4.parse_command_l("-s") is None
+
+    def test_invalid_flag_command_l(self):
+        assert a4.parse_command_l("-t") is None
+
+    def test_valid_command_l(self):
+        assert a4.parse_command_l("-r") == {"-r": True}
+
+    def test_empty_command_e(self):
+        assert a4.parse_command_e("") is None
+
+    def test_empty_command_p(self):
+        assert a4.parse_command_p("") is None
 
 
 # if __name__ == "__main__":
