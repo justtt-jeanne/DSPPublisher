@@ -41,6 +41,18 @@ class Test_TestingAPIs(unittest.TestCase):
                                "=REDACTED"
                                "&format=json")
 
+    def test_openweather_invalid_api(self):
+        open_weather = OpenWeather.OpenWeather()
+        open_weather.set_apikey("123")
+        open_weather.load_data()
+        assert open_weather.description is None
+
+    def test_lastfm_invalid_api(self):
+        last_fm = LastFM.LastFM()
+        last_fm.set_apikey("123")
+        last_fm.load_data()
+        assert last_fm.artist is None
+
     def test_openweather_transclude(self):
         open_weather = OpenWeather.OpenWeather()
         open_weather.set_apikey("REDACTED")

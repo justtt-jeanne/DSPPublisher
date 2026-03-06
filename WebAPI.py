@@ -32,7 +32,7 @@ class WebAPI(ABC):
 
     def _download_url(self, url: str) -> dict:
         '''
-        Callable method tha opens the url and gets the json from the url.
+        Callable method that opens the url and gets the json from the url.
         Stores the json so it can be used later.
         '''
         response = None
@@ -61,6 +61,7 @@ class WebAPI(ABC):
     @abstractmethod
     def load_data(self):
         '''
+        @private
         The load_data method is an abstract method that changes
         through each instance of the WebAPI class
         '''
@@ -68,6 +69,7 @@ class WebAPI(ABC):
     @abstractmethod
     def transclude(self, message: str) -> str:
         '''
+        @private
         The transclude method is an abstract method that changes
         through each instance of the WebAPI class
         '''
