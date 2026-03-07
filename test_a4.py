@@ -155,5 +155,16 @@ class Test_TestingCommandParsing(unittest.TestCase):
         assert ui.parse_quotes("'hi'", 0) == (" h i ", 4)
 
 
+class Test_TestingTryingChecking():
+    def test_check_path(self):
+        assert a4.check_path(Path("abcdef")) is False
+
+    def test_try_invalid_profile(self):
+        assert ui.trying_attribute(print("HI")) is True
+
+    def test_check_ow_and_lastfm_(self):
+        assert ui.check_ow_and_lastfm("Hi there") == "Hi there"
+
+
 # if __name__ == "__main__":
 #     unittest.main()

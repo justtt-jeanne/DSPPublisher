@@ -272,7 +272,12 @@ def command_e():
           "-addpost \"new post\": Add post to your posts."
           " You can choose to post the added post online.\r\n"
           "-delpost [ID]: Delete post given its ID.")
-    my_posts = ui.check_num_posts()
+    try:
+        my_posts = ui.check_num_posts()
+    except AttributeError:
+        print("No Profile currently loaded."
+              "Please try again after using C or O!")
+        return
     print(f"You have {my_posts} post(s).")
     command = input("Please input the command(s)"
                     " you would like to use.\r\n")
