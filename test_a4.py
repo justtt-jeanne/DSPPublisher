@@ -390,7 +390,7 @@ class Test_TestProfile(unittest.TestCase):
         my_post.set_time(12.3)
         assert my_profile.add_post(my_post) is None
     
-    def test_del_post(self):
+    def test_valid_del_post(self):
         '''
         @private
         Tests del_post will return True if valid
@@ -401,3 +401,11 @@ class Test_TestProfile(unittest.TestCase):
         my_post.set_time(12.3)
         my_profile.add_post(my_post)
         assert my_profile.del_post(0) is True
+
+    def test_invalid_del_post(self):
+        '''
+        @private
+        Tests del_post will return False if invalid
+        '''
+        my_profile = Profile.Profile()
+        assert my_profile.del_post(0) is False
