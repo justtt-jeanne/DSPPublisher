@@ -330,3 +330,10 @@ class Test_TestingJsons(unittest.TestCase):
         ) == ("error",
               "An error message will be contained here.",
               "None")
+
+    def test_invalid_json(self):
+        '''
+        @private
+        Test that an invalid Json will return None
+        '''
+        assert ds_protocol.extract_server_json("") is None
