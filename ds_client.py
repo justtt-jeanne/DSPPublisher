@@ -69,6 +69,7 @@ def send(server: str, port: int, username: str,
         return True
     except AttributeError:
         print("Server disconnected.")
+        return False
 
 
 def join_json(client, username, password):

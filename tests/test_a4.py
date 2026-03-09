@@ -240,16 +240,26 @@ class Test_TestingCommandParsing(unittest.TestCase):
 
 
 class Test_TestingTryingChecking():
+    '''
+    Testing class that tests any function that checks things
+    '''
     def test_check_path(self):
+        '''
+        @private
+        Tests that an invalid path will return path.
+        Does not test a valid path because I cannot
+        guarantee what path is on the person's computer.
+        '''
         assert a4.check_path(Path("abcdef")) is False
 
     def test_try_invalid_profile(self):
+
         assert ui.trying_attribute(print("HI")) is True
 
     def test_check_ow_and_lastfm_(self):
         assert ui.check_ow_and_lastfm("Hi there") == "Hi there"
 
-    def test_invalid_server(self):
+    def test_invalid_port(self):
         assert ds_client.send(
             "clotho.ics.uci.edu",
             1234,
@@ -257,3 +267,12 @@ class Test_TestingTryingChecking():
             "there",
             "Hi"
             ) is False
+    
+    def test_valid_send(self):
+        assert ds_client.send(
+            "clotho.ics.uci.edu",
+            2021,
+            "joseph",
+            "there",
+            "Hi"
+            ) is True
