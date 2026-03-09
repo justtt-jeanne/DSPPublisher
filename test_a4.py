@@ -196,8 +196,8 @@ class Test_TestingCommandParsing(unittest.TestCase):
         Tests that a valid e command will return
         the correct corresponding dictionary
         '''
-        assert a4.parse_command_e("-usr \"hi there\"") == {
-            "-usr": "hithere"
+        assert a4.parse_command_e("-usr \"hi everybody there\"") == {
+            "-usr": "hieverybodythere"
         }
 
     def test_empty_command_p(self):
@@ -428,3 +428,8 @@ class Test_TestProfile(unittest.TestCase):
         assert my_profile.get_posts() == [
             {"entry": "HI", "timestamp": 12.3}
         ]
+
+
+class Test_TestingUI(unittest.TestCase):
+    def test_invalid_try_attribute(self):
+        assert ui.edit_profile({"-usr": "hi"}) is None
