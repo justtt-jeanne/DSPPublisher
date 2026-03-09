@@ -16,7 +16,7 @@
 # if you are curious since we
 # already covered a bit of the JSON format in class.
 #
-# pylint: disable:invalid-name
+# pylint: disable=invalid-name
 
 '''
 Makes Profiles and Posts for users given there's a dsu file
@@ -36,7 +36,6 @@ class DsuFileError(Exception):
     Profile objects to file the system.
 
     """
-    pass
 
 
 class DsuProfileError(Exception):
@@ -47,7 +46,6 @@ class DsuProfileError(Exception):
     a dsu file to a Profile object.
 
     """
-    pass
 
 
 class Post(dict):
@@ -61,6 +59,10 @@ class Post(dict):
 
     """
     def __init__(self, entry: str = None, timestamp: float = 0):
+        '''
+        @private
+        Initializing Post variables
+        '''
         self._timestamp = timestamp
         self.set_entry(entry)
 
@@ -69,6 +71,10 @@ class Post(dict):
         dict.__init__(self, entry=self._entry, timestamp=self._timestamp)
 
     def set_entry(self, entry):
+        '''
+        @private
+        Sets the post entry
+        '''
         self._entry = entry
         dict.__setitem__(self, 'entry', entry)
 
@@ -77,13 +83,25 @@ class Post(dict):
             self._timestamp = time.time()
 
     def get_entry(self):
+        '''
+        @private
+        Gets the post entry
+        '''
         return self._entry
 
     def set_time(self, timing: float):
+        '''
+        @private
+        Sets the time for a post
+        '''
         self._timestamp = timing
         dict.__setitem__(self, 'timestamp', timing)
 
     def get_time(self):
+        '''
+        @private
+        Gets the time for a post
+        '''
         return self._timestamp
 
     """
@@ -120,6 +138,10 @@ class Profile:
     """
 
     def __init__(self, dsuserver=None, username=None, password=None):
+        '''
+        @private
+        Initializing Profile variables
+        '''
         self.dsuserver = dsuserver  # REQUIRED
         self.username = username  # REQUIRED
         self.password = password  # REQUIRED
@@ -218,16 +240,15 @@ class Profile:
 
         if p.exists() and p.suffix == '.dsu':
             try:
-                f = open(p, 'r')
-                obj = json.load(f)
-                self.username = obj['username']
-                self.password = obj['password']
-                self.dsuserver = obj['dsuserver']
-                self.bio = obj['bio']
-                for post_obj in obj['_posts']:
-                    post = Post(post_obj['entry'], post_obj['timestamp'])
-                    self._posts.append(post)
-                f.close()
+                with open(p, 'r', encoding="utf-8") as f:
+                    obj = json.load(f)
+                    self.username = obj['username']
+                    self.password = obj['password']
+                    self.dsuserver = obj['dsuserver']
+                    self.bio = obj['bio']
+                    for post_obj in obj['_posts']:
+                        post = Post(post_obj['entry'], post_obj['timestamp'])
+                        self._posts.append(post)
             except Exception as ex:
                 raise DsuProfileError(ex)
         else:

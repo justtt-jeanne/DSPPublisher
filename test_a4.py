@@ -15,6 +15,7 @@ import a4
 import ui
 import ds_client
 import ds_protocol
+import Profile
 
 
 class Test_TestingAPIs(unittest.TestCase):
@@ -240,6 +241,11 @@ class Test_TestingCommandParsing(unittest.TestCase):
         assert ui.parse_quotes("'hi'", 0) == (" h i ", 4)
 
     def test_path_parsing(self):
+        '''
+        @private
+        Tests that a path will be parsed correctly
+        with the correct corresponding output.
+        '''
         assert ui.parse_path("hi", 0) == (Path("h i"), 2)
 
 
@@ -367,3 +373,31 @@ class Test_TestingJsons(unittest.TestCase):
             "\"message\": \"An error "
             "message will be contained here.\"}}"
         ) is None
+
+
+class Test_TestProfile(unittest.TestCase):
+    '''
+    Testing Class for things related to Profile.py
+    '''
+    def test_add_post(self):
+        '''
+        @private
+        Tests add_post will return None
+        '''
+        my_profile = Profile.Profile()
+        my_post = Profile.Post()
+        my_post.set_entry("HI")
+        my_post.set_time(12.3)
+        assert my_profile.add_post(my_post) is None
+    
+    def test_del_post(self):
+        '''
+        @private
+        Tests del_post will return True if valid
+        '''
+        my_profile = Profile.Profile()
+        my_post = Profile.Post()
+        my_post.set_entry("HI")
+        my_post.set_time(12.3)
+        my_profile.add_post(my_post)
+        assert my_profile.del_post(0) is True
