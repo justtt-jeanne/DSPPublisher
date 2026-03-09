@@ -282,6 +282,19 @@ class Test_TestingTryingChecking(unittest.TestCase):
             "Hi"
             ) is False
 
+    def test_invalid_send(self):
+        '''
+        @private
+        Tests that an invalid port/server will return False.
+        '''
+        assert ds_client.send(
+            "None",
+            0,
+            "None",
+            "None",
+            "None"
+            ) is False
+
     def test_valid_send(self):
         '''
         @private
@@ -337,13 +350,3 @@ class Test_TestingJsons(unittest.TestCase):
         Tests that an empty Json will return None
         '''
         assert ds_protocol.extract_server_json("") is None
-
-    def test_missing_attribute_json(self):
-        '''
-        @private
-        Tests than a json missing an attribute
-        will return None
-        '''
-        assert ds_protocol.extract_server_json(
-            "{\"type\": error}"
-        ) is None

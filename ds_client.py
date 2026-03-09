@@ -53,7 +53,7 @@ def send(server: str, port: int, username: str,
                 return False
             if not TOKEN:
                 TOKEN = resp.token
-            if message is not None:
+            if message != "None":
                 recv, sender = post_json(sender, recv, message)
                 resp = ds_protocol.extract_server_json(recv.readline())
                 print(resp.message)

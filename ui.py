@@ -360,7 +360,7 @@ def edit_profile(flags):
                     ds_client.send(CURRENT_PROFILE.dsuserver, CURRENT_PORT,
                                    CURRENT_PROFILE.username,
                                    CURRENT_PROFILE.password,
-                                   None, bio)
+                                   "None", bio)
                 elif bio_online != "n":
                     print("Invalid option. Quitting proccess.")
                 CURRENT_PROFILE.bio = bio
