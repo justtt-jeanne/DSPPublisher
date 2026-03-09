@@ -301,6 +301,21 @@ class Test_TestingJsons(unittest.TestCase):
     Testing class that test different Jsons
     sent to ds_protocol will return the right thing.
     '''
+    def test_ok_json(self):
+        '''
+        @private
+        Test that an ok Json will return the correct
+        namedtuple information
+        '''
+        assert ds_protocol.extract_server_json(
+            "{\"response\": "
+            "{\"type\": \"ok\", "
+            "\"message\": \"Awesome Sauce\", "
+            "\"token\": \"abcdefg\"}}"
+        ) == ("ok",
+              "Awesome Sauce",
+              "abcdefg")
+
     def test_error_json(self):
         '''
         @private
