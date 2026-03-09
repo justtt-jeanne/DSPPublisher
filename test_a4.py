@@ -409,3 +409,17 @@ class Test_TestProfile(unittest.TestCase):
         '''
         my_profile = Profile.Profile()
         assert my_profile.del_post(0) is False
+
+    def test_get_posts(self):
+        '''
+        @private
+        Tests get_posts returns the correct thing
+        '''
+        my_profile = Profile.Profile()
+        my_post = Profile.Post()
+        my_post.set_entry("HI")
+        my_post.set_time(12.3)
+        my_profile.add_post(my_post)
+        assert my_profile.get_posts() == [
+            {"entry": "HI", "timestamp": 12.3}
+        ]
