@@ -431,5 +431,20 @@ class Test_TestProfile(unittest.TestCase):
 
 
 class Test_TestingUI(unittest.TestCase):
-    def test_invalid_try_attribute(self):
+    '''
+    Testing Class for testing micellaneous ui.py
+    functions that weren't covered in previous classes
+    '''
+    def test_missing_flag_arg(self):
+        '''
+        @private
+        Tests missing flag argument will return None
+        '''
+        assert ui.edit_profile({"-usr": False}) is None
+
+    def test_missing_profile(self):
+        '''
+        @private
+        Tests missing profile will return None
+        '''
         assert ui.edit_profile({"-usr": "hi"}) is None
