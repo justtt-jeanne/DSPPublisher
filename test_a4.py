@@ -13,6 +13,7 @@ import LastFM
 import OpenWeather
 import a4
 import ui
+import ds_client
 
 
 class Test_TestingAPIs(unittest.TestCase):
@@ -164,6 +165,15 @@ class Test_TestingTryingChecking():
 
     def test_check_ow_and_lastfm_(self):
         assert ui.check_ow_and_lastfm("Hi there") == "Hi there"
+
+    def test_invalid_server(self):
+        assert ds_client.send(
+            "clotho.ics.uci.edu",
+            1234,
+            "joseph",
+            "there",
+            "Hi"
+            ) is False
 
 
 # if __name__ == "__main__":
