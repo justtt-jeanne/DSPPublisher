@@ -7,7 +7,6 @@ Testing all (probably closer to 70%) of all the code across
 all the different modules dealing with command parsing.
 '''
 
-from pathlib import Path
 import unittest
 import a4
 import ui
