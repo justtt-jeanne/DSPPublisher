@@ -156,15 +156,12 @@ class Test_TestingCommandParsing(unittest.TestCase):
         Tests that a valid l command will return
         the correct corresponding dictionary
         '''
-        assert a4.parse_command_l("-r") == {"-r": True}
-
-    def test_valid_s_command_l(self):
-        '''
-        @private
-        Tests that a valid l command will return
-        the correct corresponding dictionary
-        '''
-        assert a4.parse_command_l("-s \"me.txt\"") == {"-s": "me.txt"}
+        assert a4.parse_command_l(
+            "-r -s \"me.txt\" -e \".txt\""
+            ) == {
+                "-r": True,
+                "-s": "me.txt",
+                "-e": "\".txt\""}
 
     def test_empty_command_e(self):
         '''
