@@ -304,7 +304,7 @@ class Test_TestingJsons(unittest.TestCase):
     def test_ok_json(self):
         '''
         @private
-        Test that an ok Json will return the correct
+        Tests that an ok Json will return the correct
         namedtuple information
         '''
         assert ds_protocol.extract_server_json(
@@ -319,7 +319,7 @@ class Test_TestingJsons(unittest.TestCase):
     def test_error_json(self):
         '''
         @private
-        Test that an error Json will return the correct
+        Tests that an error Json will return the correct
         namedtuple information
         '''
         assert ds_protocol.extract_server_json(
@@ -331,9 +331,19 @@ class Test_TestingJsons(unittest.TestCase):
               "An error message will be contained here.",
               "None")
 
-    def test_invalid_json(self):
+    def test_empty_json(self):
         '''
         @private
-        Test that an invalid Json will return None
+        Tests that an empty Json will return None
         '''
         assert ds_protocol.extract_server_json("") is None
+
+    def test_missing_attribute_json(self):
+        '''
+        @private
+        Tests than a json missing an attribute
+        will return None
+        '''
+        assert ds_protocol.extract_server_json(
+            "{\"type\": error}"
+        ) is None
