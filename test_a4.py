@@ -239,6 +239,9 @@ class Test_TestingCommandParsing(unittest.TestCase):
         '''
         assert ui.parse_quotes("'hi'", 0) == (" h i ", 4)
 
+    def test_path_parsing(self):
+        assert ui.parse_path("hi", 0) == (Path("h i"), 2)
+
 
 class Test_TestingTryingChecking(unittest.TestCase):
     '''
