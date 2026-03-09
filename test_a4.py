@@ -14,6 +14,7 @@ import OpenWeather
 import a4
 import ui
 import ds_client
+import ds_protocol
 
 
 class Test_TestingAPIs(unittest.TestCase):
@@ -293,3 +294,24 @@ class Test_TestingTryingChecking(unittest.TestCase):
             "there",
             "Hi"
             ) is True
+
+
+class Test_TestingJsons(unittest.TestCase):
+    '''
+    Testing class that test different Jsons
+    sent to ds_protocol will return the right thing.
+    '''
+    def test_error_json(self):
+        '''
+        @private
+        Test that an error Json will return the correct
+        namedtuple information
+        '''
+        assert ds_protocol.extract_server_json(
+            "{\"response\": "
+            "{\"type\": \"error\", "
+            "\"message\": \"An error "
+            "message will be contained here.\"}}"
+        ) == ("error",
+              "An error message will be contained here.",
+              "None")
