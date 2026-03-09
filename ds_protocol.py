@@ -36,3 +36,6 @@ def extract_server_json(json_msg: str) -> DataTuple:
     except json.JSONDecodeError:
         print("Json cannot be decoded.")
         return None
+    except AttributeError:
+        print("Server did not send a valid JSON.")
+        return None

@@ -33,39 +33,42 @@ def send(server: str, port: int, username: str,
     # depending on results of required operation
     global TOKEN
     try:
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect((server, port))
-    except ConnectionError:
-        print("Server/Port does not exist")
-        return False
-    except socket.gaierror:
-        print("Server/Port does not exist")
-        return False
-    except TimeoutError:
-        print("Timed out.")
-        return False
-    recv, sender = join_json(client, username, password)
-    resp = ds_protocol.extract_server_json(recv.readline())
-    print(resp.message)
-    try:
-        if resp.type != "ok":
+        try:
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect((server, port))
+        except ConnectionError:
+            print("Server/Port does not exist")
             return False
-        if not TOKEN:
-            TOKEN = resp.token
-        if message is not None:
-            recv, sender = post_json(sender, recv, message)
-            resp = ds_protocol.extract_server_json(recv.readline())
-            print(resp.message)
-        if bio is not None:
-            recv, sender = bio_json(sender, recv, bio)
-            resp = ds_protocol.extract_server_json(recv.readline())
-            print(resp.message)
-    except AttributeError:
-        print("Error")
+        except socket.gaierror:
+            print("Server/Port does not exist")
+            return False
+        except TimeoutError:
+            print("Timed out.")
+            return False
+        recv, sender = join_json(client, username, password)
+        resp = ds_protocol.extract_server_json(recv.readline())
+        print(resp.message)
+        try:
+            if resp.type != "ok":
+                return False
+            if not TOKEN:
+                TOKEN = resp.token
+            if message is not None:
+                recv, sender = post_json(sender, recv, message)
+                resp = ds_protocol.extract_server_json(recv.readline())
+                print(resp.message)
+            if bio is not None:
+                recv, sender = bio_json(sender, recv, bio)
+                resp = ds_protocol.extract_server_json(recv.readline())
+                print(resp.message)
+        except AttributeError:
+            print("ERROR")
+            client.close()
+            return False
         client.close()
-        return False
-    client.close()
-    return True
+        return True
+    except AttributeError:
+        print("Server disconnected.")
 
 
 def join_json(client, username, password):

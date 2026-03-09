@@ -214,7 +214,11 @@ def create_file(directory, flags):
     true_server = "".join(server)
     if CURRENT_PORT is None:
         print("Please enter a port: ")
-        CURRENT_PORT = int(input())
+        try:
+            CURRENT_PORT = int(input())
+        except TypeError:
+            print("Invalid Port.")
+            return None
     try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((true_server, CURRENT_PORT))
