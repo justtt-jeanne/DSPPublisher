@@ -275,7 +275,7 @@ def command_e():
     try:
         my_posts = ui.check_num_posts()
     except AttributeError:
-        print("No Profile currently loaded."
+        print("No Profile currently loaded. "
               "Please try again after using C or O!")
         return
     print(f"You have {my_posts} post(s).")

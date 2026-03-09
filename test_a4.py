@@ -448,3 +448,12 @@ class Test_TestingUI(unittest.TestCase):
         Tests missing profile will return None
         '''
         assert ui.edit_profile({"-usr": "hi"}) is None
+
+    def test_missing_flag_arg(self):
+        '''
+        @private
+        Tests missing flag argument will return None
+        '''
+        my_profile = Profile.Profile()
+        ui.CURRENT_PROFILE = my_profile
+        assert ui.edit_profile({"-usr": ""}) is None
