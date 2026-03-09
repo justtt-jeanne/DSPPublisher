@@ -305,7 +305,8 @@ class Test_TestingTryingChecking(unittest.TestCase):
             2021,
             "joseph",
             "there",
-            "Hi"
+            "Hi",
+            "My new bio"
             ) is True
 
 
@@ -350,3 +351,16 @@ class Test_TestingJsons(unittest.TestCase):
         Tests that an empty Json will return None
         '''
         assert ds_protocol.extract_server_json("") is None
+
+    def test_missing_key_json(self):
+        '''
+        @private
+        Tests that a Json missing an attribute
+        will return the correct None
+        '''
+        assert ds_protocol.extract_server_json(
+            "{\"yours\": "
+            "{\"type\": \"error\", "
+            "\"message\": \"An error "
+            "message will be contained here.\"}}"
+        ) is None
