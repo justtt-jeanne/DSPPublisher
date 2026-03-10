@@ -394,7 +394,7 @@ class Test_TestProfile(unittest.TestCase):
         my_post.set_entry("HI")
         my_post.set_time(12.3)
         assert my_profile.add_post(my_post) is None
-    
+
     def test_valid_del_post(self):
         '''
         @private
@@ -449,11 +449,38 @@ class Test_TestingUI(unittest.TestCase):
         '''
         assert ui.edit_profile({"-usr": "hi"}) is None
 
-    def test_missing_flag_arg(self):
+    def test_valid_ui(self):
         '''
         @private
-        Tests missing flag argument will return None
+        Tests invalid username will return None
         '''
         my_profile = Profile.Profile()
+        # my_post = Profile.Post()
+        # my_post.set_entry("HI")
+        # my_profile.add_post(my_post)
         ui.CURRENT_PROFILE = my_profile
-        assert ui.edit_profile({"-usr": ""}) is None
+        assert ui.edit_profile(
+            {"-usr": "hey",
+             "-pwd": "nope"}) is None
+
+    def test_get_len(self):
+        '''
+        @private
+        Tests get len
+        '''
+        my_profile = Profile.Profile()
+        my_post = Profile.Post()
+        my_post.set_entry("HI")
+        my_profile.add_post(my_post)
+        ui.CURRENT_PROFILE = my_profile
+        assert ui.check_num_posts == ui.check_num_posts
+
+    def test_invalid_dir(self):
+        '''
+        @private
+        Assumes an invalid directory and
+        Tests that it will return None
+        '''
+        assert ui.file_handler(
+            "C",
+            Path("C:\\Users\\LongNguyen\\Downl")) is None
