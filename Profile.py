@@ -212,9 +212,8 @@ class Profile:
 
         if p.exists() and p.suffix == '.dsu':
             try:
-                f = open(p, 'w', encoding="utf-8")
-                json.dump(self.__dict__, f)
-                f.close()
+                with open(p, 'w', encoding="utf-8") as f:
+                    json.dump(self.__dict__, f)
             except Exception as ex:
                 raise DsuFileError("Error while attempting"
                                    "to process the DSU file.", ex)

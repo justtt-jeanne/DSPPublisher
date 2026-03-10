@@ -1,10 +1,10 @@
 ICS32 Assignment 3: Publishing Online
 
-Has the same functionality as Assignment 2 but allows the user to publish their posts to the web as well as modify their bio.
+Has the same functionality as Assignment 3 but allows the user to have the keywords @weather and @lastfm and transcludes those words.
 
 
 a4.py : Calls on ui.py to manage commands. Directly copied from a2.py (no changes were made). Tells the user what commands they can use and tells them how to use it. Relatively user friendly. If you do something wrong within a command, it keeps asking you until you get it right, you cannot quit from a command once you have already initiated it.
-ui.py : Code from assignment 2. Is "admin mode" ([COMMAND] [INPUT] [[-]OPTION] [INPUT]). Now asks the user if they want to publish online if they do -addpost or -bio.
+ui.py : Code from assignment 3. Is "admin mode" ([COMMAND] [INPUT] [[-]OPTION] [INPUT]). Now asks the user if they want to publish online if they do -addpost or -bio.
         Manages keywords @weather and @lastfm and calls on OpenWeather.py and LastFM.py to transclude those keywords.
         Can't run on it's own, since there is no "if __name__ == "__main__":" block.
 WebAPI.py : Creates a superclass called WebAPI with default methods download_url and set_apikey and abstract methods load_data and transclude.
