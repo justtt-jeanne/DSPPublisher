@@ -485,6 +485,12 @@ class Test_TestingUI(unittest.TestCase):
             "C",
             Path("C:\\Users\\LongNguyen\\Downl")) is None
  
+    def test_invalid_post_id(self):
+        my_profile = Profile.Profile()
+        ui.CURRENT_PROFILE = my_profile
+        assert ui.print_profile(
+            {"-post": "hi"}) is None
+
     def test_print_valid(self):
         my_profile = Profile.Profile()
         my_post = Profile.Post()
