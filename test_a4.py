@@ -459,7 +459,7 @@ class Test_TestingUI(unittest.TestCase):
         assert ui.edit_profile(
             {"-usr": "hey",
              "-pwd": "nope"}) is None
-    
+
     def test_invalid_delpost(self):
         '''
         @private
@@ -491,14 +491,24 @@ class Test_TestingUI(unittest.TestCase):
         assert ui.file_handler(
             "C",
             Path("C:\\Users\\LongNguyen\\Downl")) is None
- 
+
     def test_invalid_post_id(self):
+        '''
+        @private
+        Tests that an invalid post ID
+        will return None
+        '''
         my_profile = Profile.Profile()
         ui.CURRENT_PROFILE = my_profile
         assert ui.print_profile(
             {"-post": "hi"}) is None
 
     def test_print_valid(self):
+        '''
+        @private
+        Tests that a valid print profile
+        command will return None
+        '''
         my_profile = Profile.Profile()
         my_post = Profile.Post()
         my_post.set_entry("HI")
