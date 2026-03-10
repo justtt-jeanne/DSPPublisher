@@ -343,7 +343,7 @@ def edit_profile(flags):
             print("Username updated.")
         if "-pwd" in flags:
             if not flags["-pwd"]:
-                print("Username must be at least 1 character.")
+                print("Password must be at least 1 character.")
                 return
             CURRENT_PROFILE.password = flags["-pwd"]
             print("Password updated.")
@@ -388,11 +388,11 @@ def edit_profile(flags):
         if "-delpost" in flags:
             try:
                 delete_id = int(flags["-delpost"]) - 1
-                print("Post deleted.")
             except ValueError:
                 print("Must be a valid integer. Please try again.")
                 return
             deleted = CURRENT_PROFILE.del_post(int(delete_id))
+            print("Post deleted.")
             if not deleted:
                 print("Invalid index. Please try again.")
                 return

@@ -484,3 +484,16 @@ class Test_TestingUI(unittest.TestCase):
         assert ui.file_handler(
             "C",
             Path("C:\\Users\\LongNguyen\\Downl")) is None
+ 
+    def test_print_valid(self):
+        my_profile = Profile.Profile()
+        my_post = Profile.Post()
+        my_post.set_entry("HI")
+        my_profile.add_post(my_post)
+        ui.CURRENT_PROFILE = my_profile
+        assert ui.print_profile(
+            {"-usr": "hey",
+             "-pwd": "nope",
+             "-posts": True,
+             "-post": 0,
+             "-all": True}) is None
