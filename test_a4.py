@@ -455,13 +455,20 @@ class Test_TestingUI(unittest.TestCase):
         Tests invalid username will return None
         '''
         my_profile = Profile.Profile()
-        # my_post = Profile.Post()
-        # my_post.set_entry("HI")
-        # my_profile.add_post(my_post)
         ui.CURRENT_PROFILE = my_profile
         assert ui.edit_profile(
             {"-usr": "hey",
              "-pwd": "nope"}) is None
+    
+    def test_invalid_delpost(self):
+        '''
+        @private
+        Tests invalid username will return None
+        '''
+        my_profile = Profile.Profile()
+        ui.CURRENT_PROFILE = my_profile
+        assert ui.edit_profile(
+            {"-delpost": "hey"}) is None
 
     def test_get_len(self):
         '''
