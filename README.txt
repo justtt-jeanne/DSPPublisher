@@ -1,6 +1,7 @@
 ICS32 Assignment 3: Publishing Online
 
-Has the same functionality as Assignment 3 but allows the user to have the keywords @weather and @lastfm and transcludes those words.
+Calls on ui.py to manage commands. Tells the user what commands they can use and tells them how to use it. Relatively user friendly. If you do something wrong within a command, it keeps asking you until you get it right, you cannot quit from a command once you have already initiated it. Allows the user to have the keywords @weather and @lastfm and transcludes those words.
+Allows for an "admin mode" ([COMMAND] [INPUT] [[-]OPTION] [INPUT]).
 
 
 a4.py : Calls on ui.py to manage commands. Directly copied from a2.py (no changes were made). Tells the user what commands they can use and tells them how to use it. Relatively user friendly. If you do something wrong within a command, it keeps asking you until you get it right, you cannot quit from a command once you have already initiated it.
